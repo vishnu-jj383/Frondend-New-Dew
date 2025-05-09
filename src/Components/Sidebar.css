@@ -1,0 +1,179 @@
+/* Sidebar Styles */
+.sidebar {
+    width: 250px; /* Open state width */
+    height: 100vh;
+    background-color: #1f2937; /* Dark gray background */
+    color: #e5e7eb; /* Light text */
+    transition: width 0.3s ease-in-out; /* Smooth width transition */
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .sidebar.closed {
+    width: 80px; /* Increased width for closed state (was 60px) */
+  }
+  
+  .sidebar.closed .text,
+  .sidebar.closed .dropdown-content,
+  .sidebar.closed .sidebar-header h3 {
+    display: none; /* Hide text and dropdowns in closed state */
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #374151; /* Subtle border */
+  }
+  
+  .sidebar-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .sidebar-icon {
+    margin-right: 0.5rem;
+  }
+  
+  .sidebar-close-btn {
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .sidebar-close-btn:hover {
+    color: #3b82f6; /* Blue hover effect */
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-menu li {
+    margin: 0.5rem 0;
+  }
+  
+  .sidebar-menu a,
+  .dropdown-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .sidebar-menu a:hover,
+  .dropdown-btn:hover {
+    background-color: #374151; /* Slightly lighter gray on hover */
+    color: #3b82f6; /* Blue text on hover */
+  }
+  
+  .sidebar-menu a.active {
+    background-color: #3b82f6; /* Blue background for active link */
+    color: #ffffff;
+    border-left: 4px solid #1d4ed8; /* Darker blue border for active */
+  }
+  
+  .icon,
+  .sub-icon {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Dropdown Button */
+  .dropdown-btn {
+    justify-content: space-between;
+  }
+  
+  .dropdown-icon {
+    font-size: 0.9rem;
+    transition: transform 0.2s ease-in-out; /* Smooth icon rotation */
+  }
+  
+  .dropdown-btn.active .dropdown-icon {
+    transform: rotate(90deg); /* Rotate icon when open */
+  }
+  
+  /* Dropdown Container */
+  .dropdown-container {
+    position: relative;
+  }
+  
+  /* Dropdown Content */
+  .dropdown-content {
+    display: none;
+    background-color: #1f2937; /* Match sidebar background */
+    padding: 0.75rem 0; /* Increased padding for spacing */
+    margin-left: 1.5rem; /* Better indentation */
+    border-left: 3px solid #4b5563; /* Thicker border for hierarchy */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth toggle */
+    opacity: 0; /* Start hidden */
+    transform: translateY(-10px); /* Start slightly above */
+  }
+  
+  .dropdown-content.show {
+    display: block;
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Normal position */
+  }
+  
+  .dropdown-content a {
+    padding: 0.6rem 2rem; /* Increased padding and indent */
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    color: #d1d5db; /* Lighter text for contrast */
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #374151; /* Consistent hover effect */
+    color: #3b82f6; /* Blue text on hover */
+  }
+  
+  .dropdown-content a.active {
+    background-color: #3b82f6; /* Match main menu active style */
+    color: #ffffff;
+    border-left: 4px solid #1d4ed8; /* Consistent active border */
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 200px; /* Open state on mobile */
+    }
+  
+    .sidebar.closed {
+      width: 0; /* Hide completely on mobile for closed state */
+      overflow: hidden;
+    }
+  
+    .dropdown-content {
+      margin-left: 1rem; /* Reduced indent for mobile */
+      padding: 0.5rem 0; /* Adjusted padding */
+    }
+  
+    .dropdown-content a {
+      padding: 0.5rem 1.5rem; /* Adjusted for mobile */
+    }
+  }

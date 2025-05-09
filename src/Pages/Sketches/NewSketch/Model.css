@@ -1,0 +1,48 @@
+/* Model.css */
+
+.view-model-card {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 25px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-btn {
+    width: 200px; /* Ensure all buttons have the same width */
+    padding: 12px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+}
+
+.action-btn:first-child {
+    background-color: #007bff;
+    color: white;
+}
+
+.action-btn:last-child {
+    background-color: #28a745;
+    color: white;
+}

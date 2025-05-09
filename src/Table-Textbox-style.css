@@ -1,0 +1,357 @@
+/* Enhanced Table Styles */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #2d3748; /* Darker text for better readability */
+    border-collapse: collapse; /* Cleaner look */
+    background: #ffffff; /* White background for consistency */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensures rounded corners apply to content */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); /* Subtle shadow */
+  }
+  
+  .table th,
+  .table td {
+    padding: 1rem; /* More spacious padding */
+    vertical-align: middle; /* Center content vertically */
+    border-bottom: 1px solid #e5e7eb; /* Lighter border */
+    text-align: left; /* Left-align for readability */
+  }
+  
+  .table thead th {
+   
+    color: #0d0205; /* White text for contrast */
+    font-weight: 600; /* Bold headers */
+    text-transform: uppercase; /* Uppercase for emphasis */
+    letter-spacing: 0.05em; /* Slight spacing for elegance */
+   
+  }
+  
+  .table tbody tr {
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background: #f9fafb; /* Light gray for alternating rows */
+  }
+  
+  .table tbody tr:hover {
+    background: #f0f9ff; /* Light blue hover effect */
+    color: #25eb25; /* Primary color on hover */
+  }
+  
+  .table-bordered {
+    border: 1px solid #e5e7eb; /* Consistent border color */
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #e5e7eb; /* Matching borders */
+  }
+  
+  /* Optional: Add subtle animation for table rows */
+  .table tbody tr {
+    position: relative;
+  }
+  
+  .table tbody tr::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    /* background: #86a2de; */
+    transition: width 0.3s ease;
+  }
+  
+  .table tbody tr:hover::after {
+    width: 100%; /* Underline effect on hover */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .table th,
+    .table td {
+      padding: 0.75rem; /* Slightly reduced padding on smaller screens */
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem); /* Responsive font size */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .table {
+      font-size: clamp(0.8rem, 2vw, 0.9rem); /* Smaller text for mobile */
+    }
+  
+    .table th,
+    .table td {
+      padding: 0.5rem; /* Compact padding */
+    }
+  }
+  /* Textbox (Input and Textarea) Styles */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    width: 100%; /* Full width by default */
+    padding: 0.85rem 1rem; /* Comfortable padding */
+    font-size: clamp(0.9rem, 2.5vw, 1rem); /* Responsive font size */
+    font-family: 'Inter', 'Roboto', sans-serif; /* Consistent font */
+    color: #2d3748; /* Dark text for readability */
+    background: #ffffff; /* White background */
+    border: 1px solid #e5e7eb; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions */
+    outline: none; /* Remove default outline */
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  textarea:focus {
+    border-color: #2563eb; /* Primary color on focus */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); /* Enhanced shadow on focus */
+    background: #f0f9ff; /* Light blue background on focus */
+  }
+  
+  input[type="text"]:hover,
+  input[type="email"]:hover,
+  input[type="password"]:hover,
+  input[type="number"]:hover,
+  textarea:hover {
+    border-color: #6b7280; /* Gray hover state */
+  }
+  
+  /* Placeholder Styles */
+  input[type="text"]::placeholder,
+  input[type="email"]::placeholder,
+  input[type="password"]::placeholder,
+  input[type="number"]::placeholder,
+  textarea::placeholder {
+    color: #6b7280; /* Muted gray for placeholders */
+    opacity: 0.8; /* Slightly transparent */
+  }
+  
+  /* Disabled State */
+  input[type="text"]:disabled,
+  input[type="email"]:disabled,
+  input[type="password"]:disabled,
+  input[type="number"]:disabled,
+  textarea:disabled {
+    background: #f5f7fa; /* Light gray background */
+    border-color: #d1d5db; /* Lighter border */
+    color: #6b7280; /* Muted text */
+    cursor: not-allowed; /* Indicate non-interactivity */
+  }
+  
+  /* Textarea Specific Styles */
+  textarea {
+    min-height: 120px; /* Minimum height for usability */
+    resize: vertical; /* Allow vertical resize only */
+  }
+  
+  /* Optional: Add a subtle animation for focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    position: relative;
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  textarea:focus {
+    transform: scale(1.01); /* Slight scale-up on focus */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea {
+      padding: 0.75rem; /* Slightly reduced padding */
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem); /* Adjusted font size */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea {
+      padding: 0.65rem; /* Compact padding */
+      font-size: clamp(0.8rem, 2vw, 0.9rem); /* Smaller text */
+    }
+  }
+  /* Override Bootstrap form-control for select */
+select.form-control {
+    width: 100%; /* Full width */
+    padding: 0.85rem 2rem 0.85rem 1rem; /* Extra padding for arrow */
+    font-size: clamp(0.9rem, 2.5vw, 1rem); /* Responsive font size */
+    font-family: 'Inter', 'Roboto', sans-serif; /* Consistent font */
+    color: #2d3748; /* Dark text */
+    background: #ffffff; /* White background */
+    border: 1px solid #e5e7eb; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions */
+    outline: none; /* Remove default outline */
+    -webkit-appearance: none; /* Remove default styling (Webkit) */
+    -moz-appearance: none; /* Remove default styling (Firefox) */
+    appearance: none; /* Remove default styling (Standard) */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%234b5563" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 1rem center; /* Arrow position */
+    cursor: pointer; /* Indicate interactivity */
+  }
+  
+  /* Focus state */
+  select.form-control:focus {
+    border-color: #2563eb; /* Primary color */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); /* Enhanced shadow */
+    background-color: #f0f9ff; /* Light blue background */
+  }
+  
+  /* Hover state */
+  select.form-control:hover {
+    border-color: #6b7280; /* Gray hover state */
+  }
+  
+  /* Placeholder-like Option */
+  select.form-control option[disabled][selected] {
+    color: #6b7280; /* Muted gray */
+    opacity: 0.8;
+  }
+  
+  /* Disabled State */
+  select.form-control:disabled {
+    background: #f5f7fa; /* Light gray */
+    border-color: #d1d5db; /* Lighter border */
+    color: #6b7280; /* Muted text */
+    cursor: not-allowed;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%236b7280" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>'); /* Gray arrow */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    select.form-control {
+      padding: 0.75rem 1.5rem 0.75rem 0.75rem;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    select.form-control {
+      padding: 0.65rem 1.25rem 0.65rem 0.65rem;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+  }
+  /* Date Input Styles */
+  input[type="date"] {
+    width: 100%; /* Full width */
+    padding: 0.85rem 1rem; /* Consistent padding */
+    font-size: clamp(0.9rem, 2.5vw, 1rem); /* Responsive font size */
+    font-family: 'Inter', 'Roboto', sans-serif; /* Consistent font */
+    color: #2d3748; /* Dark text */
+    background: #ffffff; /* White background */
+    border: 1px solid #e5e7eb; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions */
+    outline: none; /* Remove default outline */
+    appearance: none; /* Remove some default styling */
+  }
+  
+  input[type="date"]:focus {
+    border-color: #2563eb; /* Primary color on focus */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); /* Enhanced shadow */
+    background-color: #f0f9ff; /* Light blue background */
+  }
+  
+  input[type="date"]:hover {
+    border-color: #6b7280; /* Gray hover state */
+  }
+  
+  /* Placeholder for Date Input */
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: #2d3748; /* Dark text when filled */
+  }
+  
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-text,
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-month-field,
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-day-field,
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-year-field {
+    color: #6b7280; /* Muted gray for placeholder state */
+    opacity: 0.8;
+  }
+  
+  /* Disabled State for Date Input */
+  input[type="date"]:disabled {
+    background: #f5f7fa; /* Light gray background */
+    border-color: #d1d5db; /* Lighter border */
+    color: #6b7280; /* Muted text */
+    cursor: not-allowed; /* Indicate non-interactivity */
+  }
+  
+  /* Custom Calendar Icon for Date Input */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(40%) sepia(10%) saturate(500%) hue-rotate(180deg); /* Tint to match #6b7280 */
+    cursor: pointer;
+    padding: 0.5rem; /* Larger clickable area */
+  }
+  
+  input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    filter: invert(30%) sepia(80%) saturate(1500%) hue-rotate(200deg); /* Tint to #2563eb on hover */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    select,
+    input[type="date"] {
+      padding: 0.75rem 1.5rem 0.75rem 0.75rem; /* Adjusted padding for select */
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem); /* Adjusted font size */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    select,
+    input[type="date"] {
+      padding: 0.65rem 1.25rem 0.65rem 0.65rem; /* Compact padding */
+      font-size: clamp(0.8rem, 2vw, 0.9rem); /* Smaller text */
+    }
+  }
+
+
+ /* ListCustomer.css */
+
+/* Reset all <td> backgrounds */
+.table-responsive .customer-table tbody tr td {
+    background-color: #ffffff !important; /* Keep white as base */
+    --bs-table-bg-type: #ffffff !important;
+}
+
+/* Style even rows */
+.table-responsive .customer-table tbody tr:nth-child(even) td {
+    background-color: #e6fafa43 !important; /* Light teal */
+    --bs-table-bg-type: #e6fafa43 !important;
+}
+
+/* Hover effect on <td> */
+.table-responsive .customer-table.table-hover tbody tr:hover td {
+    background-color: #cceeee !important; /* Slightly deeper teal on hover */
+    --bs-table-bg-type: #cceeee !important;
+    color: #004d4d !important; /* Dark teal for contrast */
+    --bs-table-color-type: #004d4d !important;
+}

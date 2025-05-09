@@ -1,0 +1,235 @@
+/* Main background gradient */
+.login-page .login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #F2F2F2;
+  padding: 20px;
+}
+
+/* Card container */
+.login-page .login-card {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 70vh; /* Changed from height to min-height */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  margin: auto;
+}
+
+/* Removed .row as it's not needed with flexbox on .login-card */
+
+.login-page .col-6 {
+  width: 50%;
+}
+
+/* Image container */
+.login-page .image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.login-page .login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  border-radius: 10px;
+}
+
+.login-page .login-image:hover {
+  transform: scale(1.05);
+}
+
+/* Form container */
+.login-page .form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  background-color: #fff;
+  border-left: 6px solid #5F4B8B;
+  border-radius: 15px;
+}
+
+/* Card for form */
+.login-page .card {
+  width: 100%;
+  padding: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Added spacing between elements */
+}
+
+.login-page .card h3 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #5F4B8B;
+  text-align: center;
+  margin: 0; /* Removed bottom margin to use gap instead */
+}
+
+/* Alert Box */
+.login-page .alert {
+  margin: 0; /* Controlled by gap in parent */
+  background-color: #f2dede;
+  color: #a94442;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* Input field styles */
+.login-page .login-input {
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #E5E5E5;
+  width: 100%;
+  font-size: 16px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+/* Focus effect for input */
+.login-page .login-input:focus {
+  border-color: #5F4B8B;
+  box-shadow: 0 0 8px rgba(95, 75, 139, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Button Styles */
+.login-page .login-btn {
+  background-color: #FF8C42;
+  border-color: #FF8C42;
+  padding: 15px 20px;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(255, 140, 66, 0.3);
+  transition: all 0.3s ease;
+}
+
+.login-page .login-btn:hover {
+  background-color: #E77F34;
+  border-color: #E77F34;
+  transform: translateY(-3px);
+}
+
+.login-page .login-btn:focus {
+  box-shadow: 0 0 5px rgba(255, 140, 66, 0.3);
+}
+
+/* Form Labels */
+.login-page .ant-form-item-label {
+  font-size: 16px;
+  color: #333333;
+  font-weight: 500;
+}
+
+.login-page .ant-form-item {
+  margin-bottom: 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .login-page .login-container {
+    padding: 20px;
+  }
+
+  .login-page .login-card {
+    flex-direction: column;
+    max-width: 100%;
+    min-height: auto;
+  }
+
+  .login-page .col-6 {
+    width: 100%;
+  }
+
+  .login-page .image-container {
+    height: 250px;
+  }
+
+  .login-page .form-container {
+    padding: 30px;
+    border-left: none;
+    border-top: 6px solid #5F4B8B;
+  }
+
+  .login-page .card h3 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-page .login-container {
+    padding: 15px;
+  }
+
+  .login-page .image-container {
+    height: 200px;
+  }
+
+  .login-page .form-container {
+    padding: 20px;
+  }
+
+  .login-page .card {
+    padding: 20px;
+  }
+
+  .login-page .card h3 {
+    font-size: 24px;
+  }
+
+  .login-page .login-input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .login-page .login-btn {
+    font-size : medium purple;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page .login-container {
+    padding: 10px;
+  }
+
+  .login-page .image-container {
+    height: 150px;
+  }
+
+  .login-page .form-container {
+    padding: 15px;
+  }
+
+  .login-page .card {
+    padding: 15px;
+  }
+
+  .login-page .card h3 {
+    font-size: 20px;
+  }
+
+  .login-page .login-input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .login-page .login-btn {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+}

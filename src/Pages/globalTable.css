@@ -1,0 +1,203 @@
+/* ListCustomer.css */
+
+/* Reset all <td> backgrounds */
+.table-responsive .customer-table tbody tr td {
+    background-color: #ffffff !important; /* Keep white as base */
+    --bs-table-bg-type: #ffffff !important;
+}
+
+/* Style even rows */
+.table-responsive .customer-table tbody tr:nth-child(even) td {
+    background-color: #e6fafa43 !important; /* Light teal */
+    --bs-table-bg-type: #e6fafa43 !important;
+}
+
+/* Hover effect on <td> */
+.table-responsive .customer-table.table-hover tbody tr:hover td {
+    background-color: #cceeee !important; /* Slightly deeper teal on hover */
+    --bs-table-bg-type: #cceeee !important;
+    color: #004d4d !important; /* Dark teal for contrast */
+    --bs-table-color-type: #004d4d !important;
+}
+
+/* General table styling */
+.table-responsive .customer-table {
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Style for table headers */
+.table-responsive .customer-table th {
+    background-color: #f8f9fa; /* Light gray for headers */
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+/* Style for table cells */
+.table-responsive .customer-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Sticky column styling */
+.table-responsive .customer-table th.sticky-column,
+.table-responsive .customer-table td.sticky-column {
+    position: sticky;
+    background: #ffffff !important; /* Solid white for sticky columns */
+    --bs-table-bg-type: #ffffff !important; /* Match Bootstrap variable */
+    color: #333 !important; /* Ensure text remains dark */
+    --bs-table-color-type: #333 !important;
+    z-index: 2; /* Above striped rows */
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+/* Positioning for each sticky column */
+.table-responsive .customer-table th.sticky-column:nth-child(1),
+.table-responsive .customer-table td.sticky-column:nth-child(1) {
+    left: 0;
+    width: 60px;
+    min-width: 60px;
+}
+
+.table-responsive .customer-table th.sticky-column:nth-child(2),
+.table-responsive .customer-table td.sticky-column:nth-child(2) {
+    left: 60px;
+    width: 140px;
+    min-width: 140px;
+}
+
+.table-responsive .customer-table th.sticky-column:nth-child(3),
+.table-responsive .customer-table td.sticky-column:nth-child(3) {
+    left: 200px;
+    width: 180px;
+    min-width: 180px;
+}
+
+/* Ensure sticky columns override striped and hover effects */
+.table-responsive .customer-table tbody tr:nth-child(even) td.sticky-column,
+.table-responsive .customer-table tbody tr:hover td.sticky-column {
+    background: #ffffff !important; /* Force white for sticky columns */
+    --bs-table-bg-type: #ffffff !important;
+    color: #333 !important; /* Keep text readable */
+    --bs-table-color-type: #333 !important;
+}
+
+/* Action icon styling */
+.table-responsive .customer-table .action-icon {
+    cursor: pointer;
+    color: #007bff;
+    font-size: 18px;
+}
+
+.table-responsive .customer-table .action-icon:hover {
+    color: #0056b3;
+}
+
+/* Select and button styling */
+.table-responsive .customer-table select.form-select,
+.table-responsive .customer-table button.btn {
+    font-size: 13px;
+    padding: 6px 10px;
+}
+
+.table-responsive .customer-table select.form-select:disabled,
+.table-responsive .customer-table button.btn:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Existing Pagination and Filter Styling (unchanged) */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pagination-info {
+    font-size: 14px;
+}
+
+.pagination {
+    margin: 0;
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+.page-item.disabled .page-link {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.page-link:hover:not(.disabled) {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.page-item.active .page-link:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.page-item.ellipsis .page-link {
+    cursor: default;
+    color: #6c757d;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+.page-link svg {
+    font-size: 16px;
+}
+
+@media (max-width: 576px) {
+    .pagination-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pagination {
+        justify-content: flex-start !important;
+    }
+
+    .pagination-info {
+        margin-bottom: 10px;
+    }
+}
+
+.filter-section {
+    transition: all 0.3s ease;
+}

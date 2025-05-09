@@ -1,0 +1,118 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import './Sidebar.css';
+
+function Sidebar({ isSidebarOpen, toggleSidebar }) {
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const location = useLocation();
+
+  const toggleDropdown = (dropdownName) => {
+    setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+  };
+
+  const isActive = (path) => location.pathname === path;
+
+  // Define dropdown data
+  const dropdowns = [
+    { name: 'pd', label: 'PD', icon: '🔧', items: [
+      { path: '/createOrder', label: 'Create PD', icon: '👤' },
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'sketch', label: 'Sketch', icon: '✏️', items: [
+      { path: '/view_sketch_model', label: 'Add Sketch', icon: '👤' },
+      { path: '/sketchlist', label: 'List', icon: '👤' },
+      { path: '/sketch_approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'cad', label: 'CAD', icon: '📐', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'render', label: 'Render', icon: '🎨', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'design', label: 'Design', icon: '🖌️', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'report', label: 'Report', icon: '📊', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'album', label: 'Album', icon: '📸', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'customer', label: 'Customer', icon: '👥', items: [
+      { path: '/pdLists', label: 'List', icon: '👤' },
+      { path: '/approvalLists', label: 'Approval List', icon: '🔒' },
+    ]},
+    { name: 'employee', label: 'Employee', icon: '💼', items: [
+      { path: '/list_employe', label: 'List', icon: '👤' },
+      { path: '/add_employee', label: 'Add Employee', icon: '➕' },
+      { path: '/settings/notifications', label: 'Notifications', icon: '🔔' },
+      { path: '/settings/appearance', label: 'Appearance', icon: '🎨' },
+      { path: '/settings/billing', label: 'Billing', icon: '💳' },
+    ]},
+  ];
+
+  return (
+    <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+      <div className="sidebar-header">
+        <h3>
+          <span className="sidebar-icon">⚙️</span>Navigation
+        </h3>
+        <button className="sidebar-close-btn" onClick={toggleSidebar}>
+          <span className="close-icon">✖</span>
+        </button>
+      </div>
+      <ul className="sidebar-menu">
+        <li>
+          <Link to="/" className={isActive('/') ? 'active' : ''}>
+            <span className="icon">📊</span>
+            <span className="text">Dashboard</span>
+          </Link>
+        </li>
+
+        {dropdowns.map((dropdown) => (
+          <li className="dropdown-container" key={dropdown.name}>
+            <button
+              className={`dropdown-btn ${openDropdown === dropdown.name ? 'active' : ''}`}
+              onClick={() => toggleDropdown(dropdown.name)}
+            >
+              <span>
+                <span className="icon">{dropdown.icon}</span>
+                <span className="text">{dropdown.label}</span>
+              </span>
+              <span className="dropdown-icon">
+                {openDropdown === dropdown.name ? '▾' : '▸'}
+              </span>
+            </button>
+            <div className={`dropdown-content ${openDropdown === dropdown.name ? 'show' : ''}`}>
+              {dropdown.items.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={isActive(item.path) ? 'active' : ''}
+                >
+                  <span className="sub-icon">{item.icon}</span>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </li>
+        ))}
+
+        <li>
+          <Link to="/logout" className={isActive('/logout') ? 'active' : ''}>
+            <span className="icon">🚪</span>
+            <span className="text">Logout</span>
+          </Link>
+        </li>
+      </ul>
+    </aside>
+  );
+}
+
+export default Sidebar;

@@ -1,0 +1,39 @@
+/* Prefix all the classes with vieworder- to avoid conflicts */
+.vieworder-container {
+    padding: 20px;
+}
+
+.vieworder-heading {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.vieworder-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.vieworder-card {
+    width: 100%;
+    max-width: 500px;
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.vieworder-card h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.vieworder-card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.vieworder-card img {
+    border-radius: 8px;
+}
