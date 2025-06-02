@@ -156,6 +156,22 @@
     color: #ffffff;
     border-left: 4px solid #1d4ed8; /* Consistent active border */
   }
+
+  .icon-container {
+  /* background-color: #0b1735;  */
+  padding: 8px; /* Optional: Adds space around the image */
+  border-radius: 8px; /* Optional: Rounds the background */
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+   /* margin-bottom: 20px; */
+}
+
+.login-image {
+  width: 130px;
+  height: 60px;
+  object-fit: contain;
+}
   
   /* Responsive Design */
   @media (max-width: 768px) {

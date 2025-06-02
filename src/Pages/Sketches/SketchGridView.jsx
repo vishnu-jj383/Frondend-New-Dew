@@ -2,11 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, Card } from "antd";
-import Footer from "../Footer";
-import Header from "../Header";
-import SideBar from "../SideBar";
+import Footer from "../../Components/Footer";
+import Content from "../../Components/Content";
 import Cookies from "js-cookie";
-import { useSelector } from "react-redux";
+
 import "./Grid.css";
 import { FaSearch, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import debounce from "lodash/debounce";
@@ -26,7 +25,7 @@ const SketchGridView = () => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const rowsPerPage = 12;
   const navigate = useNavigate();
-  const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
+  
 
   const [filters, setFilters] = useState({
     status: "",
@@ -214,11 +213,10 @@ const SketchGridView = () => {
   };
 
   return (
-    <div className={`wrapper ${sideBarState ? "sidebar_minimize" : ""}`}>
-      <SideBar />
-      <div className="main-panel">
-        <Header />
-        <div className="container">
+     <main className="main-content">
+    
+      <Content>
+        <div className="">
           <div className="page-inner">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h3 className="fw-bold">Sketch Approval List</h3>
@@ -399,9 +397,9 @@ const SketchGridView = () => {
             )}
           </div>
         </div>
-        <Footer />
-      </div>
-    </div>
+        </Content>
+    <Footer />
+  </main>
   );
 };
 

@@ -1,4 +1,7 @@
 /* Global Reset and Base Styles */
+main {
+  margin-top: 40px; /* Adjust based on navbar height */
+}
 * {
   margin: 0;
   padding: 0;
@@ -158,11 +161,15 @@
 .footer {
   background: linear-gradient(90deg, #ffffff 0%, #f9fafb 100%);
   color: #4b5563;
+  position: sticky;
+  bottom: 0;
+  text-align: center;
+  border-top: 1px solid #ccc;
   padding: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
   border-radius: 10px 10px 0 0;
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
-  border-top: 1px solid #e5e7eb;
+  /* border-top: 1px solid #e5e7eb; */
 }
 
 .footer p {
@@ -282,3 +289,136 @@
     padding: clamp(0.3rem, 1vw, 0.5rem); /* Minimal padding */
   }
 }
+
+
+.button-disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  padding: 8px 16px;
+  border: none;
+}
+
+.button-enabled {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: none;
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: fixed;
+  background-color: red; 
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 9999;
+  pointer-events: none;
+}
+/* move to render,cad,sketch button animation styling */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.blink-animation {
+  animation: blink 1.5s ease-in-out infinite;
+  background-color: #93a90a;
+}
+
+@keyframes blink {
+  0% { background-color: rgb(110, 186, 151); }
+  50% { background-color: rgb(90, 160, 99); }
+  100% { background-color: rgb(21, 103, 51); }
+}
+/* animation style end */
+
+/* approval list designer model style */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.custom-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 600px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  margin-top: 15px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-group:last-child {
+  margin-right: 0;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+/* Custom Checkbox Style */
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #007bff;
+  margin-left: 10px;
+}
+
+.custom-checkbox:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.custom-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+ /* end approval list designer model style  */

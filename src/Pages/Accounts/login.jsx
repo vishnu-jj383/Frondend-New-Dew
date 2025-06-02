@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (values) => {
     try {
       console.log("Form Values: ", values);
-      const response = await axios.post(window.url +"/login", {
+      const response = await axios.post(window.url +"/auth/login", {
         email: values.email,
         password: values.password,
       });
@@ -26,6 +26,7 @@ const Login = () => {
       Cookies.set("user_mail", umail, { expires: 1 });
 
       Cookies.set("authToken", response.data.token, { expires: 1 });
+      // console.log(Cookies.get("authToken"))
       navigate("/")
       window.location.reload();
     } catch (error) {

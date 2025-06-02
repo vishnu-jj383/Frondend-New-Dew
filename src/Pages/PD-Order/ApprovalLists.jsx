@@ -1,40 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import axios from 'axios';
-import Footer from '../../Components/Footer';
-import Header from '../../Components/Header';
-import Content from '../../Components/Content';
-import Cookies from 'js-cookie';
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import axios from "axios";
+import Footer from "../../Components/Footer";
+import Header from "../../Components/Header";
+import Content from "../../Components/Content";
+import Cookies from "js-cookie";
+import { FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
 // import { useSelector } from "react-redux";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { IoEye } from "react-icons/io5";
 
+import debounce from "lodash/debounce";
 const ApprovalLists = () => {
+  const API_URL = window.url + "order/getAllOrders";
+  const SEARCH_API_URL = window.url + "order/searchOrders";
+  const CustomerAPI_URL = window.url + "customer/getAllCustomers";
+
   const [rows, setRows] = useState([]);
   const [customer_rows, setCustomer_Rows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [isSearchActive, setIsSearchActive] = useState(false); // Added search state
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isSearchPending, setIsSearchPending] = useState(false);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
-  // Search State
-  const [orderId, setOrderId] = useState("");
-  const [customerId, setCustomerId] = useState("");
-  const [status, setStatus] = useState("");
-  const [orderDateStart, setOrderDateStart] = useState("");
-  const [orderDateEnd, setOrderDateEnd] = useState("");
-  const [promiseDateStart, setPromiseDateStart] = useState("");
-  const [promiseDateEnd, setPromiseDateEnd] = useState("");
+  const [filters, setFilters] = useState({
+    orderId: "",
+    customerId: "",
+    status: "",
+    orderDateStart: "",
+    orderDateEnd: "",
+    promiseDateStart: "",
+    promiseDateEnd: "",
+  });
 
   const navigate = useNavigate();
-  // const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
-
-  const API_URL = window.url + "order/getAllOrders";
-  const SEARCH_API_URL = window.url + "order/searchOrders";
-  const CustomerAPI_URL = window.url + "customer/getAllCustomers";
 
   const handleVieworder = (customerId) => {
     navigate(`/vieworder/${customerId}`);
@@ -73,7 +76,9 @@ const ApprovalLists = () => {
       );
       setRows((prevRows) =>
         prevRows.map((row) =>
-          row.id === id ? { ...row, status: value, ...(value === "Rejected" && { reason }) } : row
+          row.id === id
+            ? { ...row, status: value, ...(value === "Rejected" && { reason }) }
+            : row
         )
       );
       Swal.fire({
@@ -136,9 +141,16 @@ const ApprovalLists = () => {
       navigate("/");
       return;
     }
-    fetchOrders();
+
+    if (!isSearchPending) {
+      if (isSearchActive && Object.values(filters).some((val) => val !== "")) {
+        debouncedSearch(filters);
+      } else {
+        fetchOrders();
+      }
+    }
     getCustomer();
-  }, [navigate, currentPage, rowsPerPage]);
+  }, [navigate, currentPage, rowsPerPage, isSearchActive, isSearchPending]);
 
   const fetchOrders = async () => {
     const savedToken = Cookies.get("authToken");
@@ -149,16 +161,11 @@ const ApprovalLists = () => {
         { page: currentPage, pageSize: rowsPerPage },
         { headers: { Authorization: `Bearer ${savedToken}` } }
       );
-      if (response.data) {
-        setRows(response.data.data || []);
-        setTotalRecords(response.data.totalOrders || 0);
-      }
+      setRows(response.data.data || []);
+      setTotalRecords(response.data.totalOrders || 0);
+      setIsSearchActive(false);
     } catch (err) {
-      setError(`Failed to fetch Order data: ${err.response?.data?.message || err.message}`);
-      if (err.response?.data?.message === "Token expired, please login again" || err.message === "Token expired, please login again") {
-        Cookies.remove("authToken");
-        navigate("/");
-      }
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -171,278 +178,296 @@ const ApprovalLists = () => {
       });
       setCustomer_Rows(response.data.data || []);
     } catch (err) {
-      setError(`Failed to fetch Customer data: ${err.message}`);
-      if (err.response?.data?.message === "Token expired, please login again" || err.message === "Token expired, please login again") {
-        Cookies.remove("authToken");
-        navigate("/");
-      }
+      handleError(err);
     }
   };
 
-  const handleSearch = async () => {
-    const savedToken = Cookies.get("authToken");
-    if (!savedToken) {
+  const handleError = (err) => {
+    const message = err.response?.data?.message || err.message;
+    setError(`Failed to fetch data: ${message}`);
+    if (message === "Token expired, please login again") {
+      Cookies.remove("authToken");
       navigate("/");
-      return;
     }
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        SEARCH_API_URL,
-        {
-          orderId,
-          customerId,
-          status,
-          orderDateStart,
-          orderDateEnd,
-          promiseDateStart,
-          promiseDateEnd,
-          page: currentPage,
-          pageSize: rowsPerPage
-        },
-        { headers: { Authorization: `Bearer ${savedToken}` } }
-      );
-      if (response.data) {
+  };
+
+  const debouncedSearch = useCallback(
+    debounce(async (searchFilters) => {
+      const savedToken = Cookies.get("authToken");
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          SEARCH_API_URL,
+          { ...searchFilters, page: currentPage, pageSize: rowsPerPage },
+          { headers: { Authorization: `Bearer ${savedToken}` } }
+        );
         setRows(response.data.data || []);
         setTotalRecords(response.data.totalOrders || 0);
         setIsSearchActive(true);
-        setCurrentPage(1); // Reset to first page on new search
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setLoading(false);
+        setIsSearchPending(false);
       }
-    } catch (err) {
-      setError(`Failed to fetch search Order data: ${err.response?.data?.message || err.message}`);
-      if (err.response?.data?.message === "Token expired, please login again" || err.message === "Token expired, please login again") {
-        Cookies.remove("authToken");
-        navigate("/");
+    }, 500),
+    [currentPage, rowsPerPage]
+  );
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => {
+      const newFilters = { ...prev, [name]: value };
+      const hasFilters = Object.values(newFilters).some((val) => val !== "");
+
+      if (hasFilters) {
+        setIsSearchPending(true);
+        setCurrentPage(1);
+        debouncedSearch(newFilters);
+      } else {
+        setIsSearchPending(false);
+        setIsSearchActive(false);
+        fetchOrders();
       }
-    } finally {
-      setLoading(false);
-    }
+      return newFilters;
+    });
   };
 
   const handleClearFilter = () => {
-    setOrderId("");
-    setCustomerId("");
-    setStatus("");
-    setOrderDateStart("");
-    setOrderDateEnd("");
-    setPromiseDateStart("");
-    setPromiseDateEnd("");
-    setIsSearchActive(false);
+    setFilters({
+      orderId: "",
+      customerId: "",
+      status: "",
+      orderDateStart: "",
+      orderDateEnd: "",
+      promiseDateStart: "",
+      promiseDateEnd: "",
+    });
     setCurrentPage(1);
+    setIsSearchActive(false);
+    setIsSearchPending(false);
     fetchOrders();
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= Math.ceil(totalRecords / rowsPerPage)) {
+      setCurrentPage(page);
+    }
   };
 
   const totalPages = Math.ceil(totalRecords / rowsPerPage);
 
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+    const halfRange = Math.floor(maxPagesToShow / 2);
+    let startPage = Math.max(1, currentPage - halfRange);
+    let endPage = Math.min(totalPages, currentPage + halfRange);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      if (currentPage <= halfRange) {
+        endPage = Math.min(totalPages, maxPagesToShow);
+      } else if (currentPage > totalPages - halfRange) {
+        startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+      }
+    }
+
+    if (startPage > 1) {
+      pageNumbers.push(
+        <li key={1} className="page-item">
+          <button className="page-link" onClick={() => handlePageChange(1)}>
+            1
+          </button>
+        </li>
+      );
+      if (startPage > 2) {
+        pageNumbers.push(
+          <li key="start-ellipsis" className="page-item ellipsis">
+            <span className="page-link">…</span>
+          </li>
+        );
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <li
+          key={i}
+          className={`page-item ${currentPage === i ? "active" : ""}`}
+        >
+          <button className="page-link" onClick={() => handlePageChange(i)}>
+            {i}
+          </button>
+        </li>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pageNumbers.push(
+          <li key="end-ellipsis" className="page-item ellipsis">
+            <span className="page-link">…</span>
+          </li>
+        );
+      }
+      pageNumbers.push(
+        <li key={totalPages} className="page-item">
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(totalPages)}
+          >
+            {totalPages}
+          </button>
+        </li>
+      );
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <main className="main-content">
-   <br/><br/>
-    <Content>
+      <Content>
         <div className="">
           <div className="page-inner">
-            <div className="page-header">
+            <div className="page-header d-flex justify-content-between align-items-center">
               <h3 className="fw-bold mb-3">PD Approval List</h3>
+              <button
+                className="btn btn-link p-0"
+                onClick={() => setIsFilterVisible(!isFilterVisible)}
+                aria-label={isFilterVisible ? "Hide Filters" : "Show Filters"}
+              >
+                <FaSearch
+                  size={25}
+                  className={isFilterVisible ? "text-primary" : "text-muted"}
+                />
+              </button>
             </div>
 
-            {/* Filter Section */}
-            <div className="row">
-              <div className="col-md-12">
-                <div className="card">
-                  <div className="card-body filter-section">
-                    <div className="row g-3 align-items-end">
-                      {/* Order Number */}
-                      <div className="col-md-3">
-                        <label>Concept ID</label>
-                        <div className="position-relative">
+            {isFilterVisible && (
+              <div className="row mb-4">
+                <div className="col-md-12">
+                  <div className="card">
+                    <div className="card-body filter-section">
+                      <div className="row g-3 align-items-end">
+                        <div className="col-md-3">
+                          <label>Concept ID</label>
                           <input
                             type="text"
-                            className="form-control pr-4"
-                            value={orderId}
-                            onChange={(e) => setOrderId(e.target.value)}
+                            name="orderId"
+                            className="form-control"
+                            value={filters.orderId}
+                            onChange={handleFilterChange}
                             placeholder="Search by Concept ID"
                           />
-                          {orderId && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setOrderId("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Customer Name */}
-                      <div className="col-md-3">
-                        <label>Customer Name</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Customer Name</label>
                           <select
-                            className="form-control pr-4"
-                            value={customerId}
-                            onChange={(e) => setCustomerId(e.target.value)}
+                            name="customerId"
+                            className="form-control"
+                            value={filters.customerId}
+                            onChange={handleFilterChange}
                           >
                             <option value="">Select Customer</option>
                             {customer_rows.map((cus) => (
-                              <option key={cus.id} value={cus.id}>{cus.customer_first_name}</option>
+                              <option key={cus.id} value={cus.id}>
+                                {cus.customer_first_name}
+                              </option>
                             ))}
                           </select>
-                          {customerId && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setCustomerId("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Order Date (Start) */}
-                      <div className="col-md-3">
-                        <label>Order Date (Start)</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Order Date (Start)</label>
                           <input
                             type="date"
-                            className="form-control pr-4"
-                            value={orderDateStart}
-                            onChange={(e) => setOrderDateStart(e.target.value)}
+                            name="orderDateStart"
+                            className="form-control"
+                            value={filters.orderDateStart}
+                            onChange={handleFilterChange}
                           />
-                          {orderDateStart && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setOrderDateStart("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Order Date (End) */}
-                      <div className="col-md-3">
-                        <label>Order Date (End)</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Order Date (End)</label>
                           <input
                             type="date"
-                            className="form-control pr-4"
-                            value={orderDateEnd}
-                            onChange={(e) => setOrderDateEnd(e.target.value)}
+                            name="orderDateEnd"
+                            className="form-control"
+                            value={filters.orderDateEnd}
+                            onChange={handleFilterChange}
                           />
-                          {orderDateEnd && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setOrderDateEnd("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Promised Date (Start) */}
-                      <div className="col-md-3">
-                        <label>Promised Date (Start)</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Promised Date (Start)</label>
                           <input
                             type="date"
-                            className="form-control pr-4"
-                            value={promiseDateStart}
-                            onChange={(e) => setPromiseDateStart(e.target.value)}
+                            name="promiseDateStart"
+                            className="form-control"
+                            value={filters.promiseDateStart}
+                            onChange={handleFilterChange}
                           />
-                          {promiseDateStart && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setPromiseDateStart("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Promised Date (End) */}
-                      <div className="col-md-3">
-                        <label>Promised Date (End)</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Promised Date (End)</label>
                           <input
                             type="date"
-                            className="form-control pr-4"
-                            value={promiseDateEnd}
-                            onChange={(e) => setPromiseDateEnd(e.target.value)}
+                            name="promiseDateEnd"
+                            className="form-control"
+                            value={filters.promiseDateEnd}
+                            onChange={handleFilterChange}
                           />
-                          {promiseDateEnd && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setPromiseDateEnd("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Status */}
-                      <div className="col-md-3">
-                        <label>Status</label>
-                        <div className="position-relative">
+                        <div className="col-md-3">
+                          <label>Status</label>
                           <select
-                            className="form-control pr-4"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
+                            name="status"
+                            className="form-control"
+                            value={filters.status}
+                            onChange={handleFilterChange}
                           >
                             <option value="">All</option>
                             <option value="Pending">Pending</option>
                             <option value="Approved">Approved</option>
                             <option value="Rejected">Rejected</option>
                           </select>
-                          {status && (
-                            <button 
-                              className="btn btn-sm btn-light position-absolute end-0 top-50 translate-middle-y me-2"
-                              onClick={() => setStatus("")}
-                            >
-                              ✖
-                            </button>
-                          )}
                         </div>
-                      </div>
-
-                      {/* Dynamic Search/Clear Filter Button */}
-                      <div className="col-md-3">
-                        <button 
-                          className="btn btn-primary"
-                          onClick={isSearchActive ? handleClearFilter : handleSearch}
-                        >
-                          {isSearchActive ? "Clear Filter" : "Search"}
-                        </button>
+                        <div className="col-md-3 text-end">
+                          <button
+                            className="btn btn-outline-primary"
+                            onClick={handleClearFilter}
+                            disabled={!Object.values(filters).some((v) => v)}
+                          >
+                            Clear Filters
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Table Section */}
             <div className="row">
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-body">
                     {loading ? (
-                      <p>Loading orders...</p>
+                      <div className="text-center py-4">
+                        <div className="spinner-border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
                     ) : error ? (
                       <p className="text-danger">{error}</p>
                     ) : (
                       <>
-                         <div className="table-wrapper">
-                        <table
-                          className="table table-striped table-hover table-bordered"
-                          role="grid"
-                          aria-describedby="pd-list-info"
-                        >
+                        <div className="table-responsive">
+                          <table className="table table-striped customer-table">
                             <thead>
                               <tr>
-                                <th></th>
-                                <th>ID</th>
-                                <th>Concept ID</th>
+                                <th className="sticky-column"></th>
+                                {/* <th>ID</th> */}
+                                <th className="sticky-column">Concept ID</th>
                                 <th>Customer Name</th>
                                 <th>Order Date</th>
                                 <th>Category</th>
@@ -454,94 +479,160 @@ const ApprovalLists = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {rows.map((row) => (
-                                <tr key={row.id}>
-                                  <td><IoEye  className="action-icon" onClick={() => handleVieworder(row.id)} /></td>
-                                  <td>{row.id}</td>
-                                  <td>{row.orderNo}</td>
-                                  <td>{row["Customer.customer_first_name"]}</td>
-                                  <td>{row.orderDate}</td>
-                                  <td>{row.categoryName}</td>
-                                  <td>{row.promiseDate}</td>
-                                  <td>{row.status}</td>
-                                  <td>{row.orderStatus}</td>
-                                  <td style={{ minWidth: "200px", whiteSpace: "pre-line" }}>
-                                    <select
-                                      value={row.status}
-                                      onChange={(e) => handleApprovalChange(row.id, e.target.value)}
-                                      className="form-select"
-                                      disabled={row.status === "Approved" || row.status === "Rejected"}
+                              {rows.length > 0 ? (
+                                rows.map((row) => (
+                                  <tr key={row.id}>
+                                    <td >
+                                      <IoEye
+                                        className="action-icon"
+                                        onClick={() => handleVieworder(row.id)}
+                                      />
+                                    </td>
+                                    {/* <td>{row.id}</td> */}
+                                    <td >
+                                      {row.orderNo}
+                                    </td>
+                                    <td>
+                                      {row["Customer.customer_first_name"]}
+                                    </td>
+                                    <td>{row.orderDate}</td>
+                                    <td>{row.categoryName}</td>
+                                    <td>{row.promiseDate}</td>
+                                    <td>{row.status}</td>
+                                    <td>{row.orderStatus}</td>
+                                    <td
+                                      style={{
+                                        minWidth: "200px",
+                                        whiteSpace: "pre-line",
+                                      }}
                                     >
-                                      <option value="Pending" disabled>Pending</option>
-                                      <option value="Approved">Approved</option>
-                                      <option value="Rejected">Rejected</option>
-                                    </select>
-                                  </td>
-                                  <td style={{ minWidth: "200px", whiteSpace: "pre-line" }}>
-                                    <button 
-                                      onClick={() => handleMoveToSkitch(row.id)} 
-                                      disabled={row.orderStatus !== "order" || row.status !== "Approved"}
-                                      className={`btn btn-sm ${row.orderStatus !== "order" ? "btn-secondary" : "btn-success"}`}
+                                      <select
+                                        value={row.status}
+                                        onChange={(e) =>
+                                          handleApprovalChange(
+                                            row.id,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="form-select"
+                                        disabled={
+                                          row.status === "Approved" ||
+                                          row.status === "Rejected"
+                                        }
+                                      >
+                                        <option value="Pending" disabled>
+                                          Pending
+                                        </option>
+                                        <option value="Approved">
+                                          Approved
+                                        </option>
+                                        <option value="Rejected">
+                                          Rejected
+                                        </option>
+                                      </select>
+                                    </td>
+                                    <td
+                                      style={{
+                                        minWidth: "200px",
+                                        whiteSpace: "pre-line",
+                                      }}
                                     >
-                                      {row.orderStatus !== "order" && row.status === "Approved" ? "Moved to Sketch" : "Move to Sketch"}
-                                    </button>
+                                      <button
+                                        onClick={() =>
+                                          handleMoveToSkitch(row.id)
+                                        }
+                                         className="btn btn-sm"
+                                        style={{
+                                          backgroundColor:
+                                            row.orderStatus !== "order"
+                                              ? "#0056b3"
+                                              : "orange",
+                                          animation:
+                                            row.orderStatus === "sorder" &&
+                                            row.status === "Approved"
+                                              ? "blink 1s infinite"
+                                              : "none",
+                                          color: "white",
+                                        }}
+                                        disabled={
+                                          row.orderStatus !== "order" ||
+                                          row.status !== "Approved"
+                                        }
+                                        // className={`btn btn-sm ${
+                                        //   row.orderStatus !== "order"
+                                        //     ? "btn-secondary"
+                                        //     : "btn-success"
+                                        // }`}
+                                      >
+                                        {row.orderStatus !== "order" &&
+                                        row.status === "Approved"
+                                          ? "Moved to Sketch"
+                                          : "Move to Sketch"}
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="11" className="text-center">
+                                    {isSearchActive
+                                      ? "No data found"
+                                      : "No orders found"}
                                   </td>
                                 </tr>
-                              ))}
+                              )}
                             </tbody>
                           </table>
                         </div>
 
-                        {/* Pagination Controls */}
-                        <div className="w-full flex justify-end pr-4" style={{ display: "flex", justifyContent: "flex-end" }}>
-                          <div className="d-flex justify-content-center mt-4">
-                            <button
-                              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                              disabled={currentPage === 1}
-                              className="btn btn-sm btn-outline-primary"
-                            >
-                              ◀
-                            </button>
-                            <button
-                              onClick={() => setCurrentPage(1)}
-                              className={`btn btn-sm mx-1 ${currentPage === 1 ? "btn-primary" : "btn-outline-primary"}`}
-                            >
-                              1
-                            </button>
-                            {currentPage > 4 && <span className="mx-1">...</span>}
-                            {Array.from({ length: Math.min(3, totalPages - 2) }, (_, i) => i + Math.max(2, currentPage - 1))
-                              .filter(num => num < totalPages)
-                              .map((num) => (
-                                <button
-                                  key={num}
-                                  onClick={() => setCurrentPage(num)}
-                                  className={`btn btn-sm mx-1 ${currentPage === num ? "btn-primary" : "btn-outline-primary"}`}
+                        {!isSearchActive && totalRecords > 0 && (
+                          <div className="pagination-container mt-4">
+                            <div className="pagination-info text-muted">
+                              Showing {rows.length} of {totalRecords} records
+                            </div>
+                            <nav aria-label="Page navigation">
+                              <ul className="pagination justify-content-end">
+                                <li
+                                  className={`page-item ${
+                                    currentPage === 1 ? "disabled" : ""
+                                  }`}
                                 >
-                                  {num}
-                                </button>
-                              ))}
-                            {currentPage < totalPages - 3 && <span className="mx-1">...</span>}
-                            {totalPages > 1 && (
-                              <button
-                                onClick={() => setCurrentPage(totalPages)}
-                                className={`btn btn-sm mx-1 ${currentPage === totalPages ? "btn-primary" : "btn-outline-primary"}`}
-                              >
-                                {totalPages}
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
-                              disabled={currentPage >= totalPages}
-                              className="btn btn-sm btn-outline-primary"
-                            >
-                              ▶
-                            </button>
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handlePageChange(currentPage - 1)
+                                    }
+                                    disabled={currentPage === 1}
+                                  >
+                                    <FaChevronLeft />
+                                  </button>
+                                </li>
+                                {renderPageNumbers()}
+                                <li
+                                  className={`page-item ${
+                                    currentPage === totalPages ||
+                                    totalRecords === 0
+                                      ? "disabled"
+                                      : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handlePageChange(currentPage + 1)
+                                    }
+                                    disabled={
+                                      currentPage === totalPages ||
+                                      totalRecords === 0
+                                    }
+                                  >
+                                    <FaChevronRight />
+                                  </button>
+                                </li>
+                              </ul>
+                            </nav>
                           </div>
-                        </div>
-
-                        <p className="mt-2 text-right text-muted">
-                          Showing {rows.length} of {totalRecords} records
-                        </p>
+                        )}
                       </>
                     )}
                   </div>
@@ -550,9 +641,9 @@ const ApprovalLists = () => {
             </div>
           </div>
         </div>
-        </Content>
-    <Footer />
-  </main>
+      </Content>
+      <Footer />
+    </main>
   );
 };
 

@@ -1,0 +1,477 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import axios from "axios";
+import {
+  FaEdit,
+  FaTrash,
+  FaEllipsisV,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSearch,
+} from "react-icons/fa";
+import Footer from "../../Components/Footer";
+import Content from "../../Components/Content";
+import Cookies from "js-cookie";
+// import { useSelector } from "react-redux";
+import { IoEye } from "react-icons/io5";
+import "../globalTable.css"; // Assuming you have this CSS file
+
+function RenderList() {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+
+  const navigate = useNavigate();
+  // const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
+
+  // Filters State
+  const [filters, setFilters] = useState({
+    renderNo: "",
+    status: "",
+    startRenderCompletedDate: "",
+    endRenderCompletedDate: "",
+  });
+
+  const API_URL = window.url + "render";
+  const SEARCH_API_URL = window.url + "render/searchRenders";
+
+  const handleEdit = (renderId) => {
+    navigate(`/render_edit/${renderId}`);
+  };
+
+  const handleViewrender = (customerId) => {
+    navigate(`/viewrender/${customerId}`);
+  };
+
+  // Fetch all renders with pagination
+  const fetchOrders = async () => {
+    const savedToken = Cookies.get("authToken");
+    if (!savedToken) {
+      navigate("/");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${API_URL}/getAllRenders`,
+        { page: currentPage, pageSize: rowsPerPage },
+        { headers: { Authorization: `Bearer ${savedToken}` } }
+      );
+      setRows(response.data.data || []);
+      setTotalRecords(response.data.totalRecords || 0);
+      setIsSearchActive(false);
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Search renders based on filters
+  const searchRenders = async () => {
+    const savedToken = Cookies.get("authToken");
+    if (!savedToken) {
+      navigate("/");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        SEARCH_API_URL,
+        { ...filters },
+        { headers: { Authorization: `Bearer ${savedToken}` } }
+      );
+      setRows(response.data.data || []);
+      setTotalRecords(response.data.totalRecords || response.data.data.length);
+      setIsSearchActive(true);
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleError = (err) => {
+    const message = err.response?.data?.message || err.message;
+    setError(`Failed to fetch data: ${message}`);
+    if (message === "Token expired, please login again") {
+      Cookies.remove("authToken");
+      navigate("/");
+    }
+  };
+
+  // Load data based on filters or pagination
+  useEffect(() => {
+    const hasFilters = Object.values(filters).some((val) => val !== "");
+    if (hasFilters) {
+      searchRenders();
+    } else {
+      fetchOrders();
+    }
+  }, [currentPage, filters]); // Trigger on page change or filter change
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setCurrentPage(1); // Reset to page 1 on filter change
+  };
+
+  const handleClearFilter = () => {
+    setFilters({
+      renderNo: "",
+      status: "",
+      startRenderCompletedDate: "",
+      endRenderCompletedDate: "",
+    });
+    setCurrentPage(1);
+    setIsSearchActive(false);
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= Math.ceil(totalRecords / rowsPerPage)) {
+      setCurrentPage(page);
+    }
+  };
+
+  const totalPages = Math.ceil(totalRecords / rowsPerPage);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+    const halfRange = Math.floor(maxPagesToShow / 2);
+    let startPage = Math.max(1, currentPage - halfRange);
+    let endPage = Math.min(totalPages, currentPage + halfRange);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      if (currentPage <= halfRange) {
+        endPage = Math.min(totalPages, maxPagesToShow);
+      } else if (currentPage > totalPages - halfRange) {
+        startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+      }
+    }
+
+    if (startPage > 1) {
+      pageNumbers.push(
+        <li key={1} className="page-item">
+          <button className="page-link" onClick={() => handlePageChange(1)}>
+            1
+          </button>
+        </li>
+      );
+      if (startPage > 2) {
+        pageNumbers.push(
+          <li key="start-ellipsis" className="page-item ellipsis">
+            <span className="page-link">…</span>
+          </li>
+        );
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <li
+          key={i}
+          className={`page-item ${currentPage === i ? "active" : ""}`}
+        >
+          <button className="page-link" onClick={() => handlePageChange(i)}>
+            {i}
+          </button>
+        </li>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pageNumbers.push(
+          <li key="end-ellipsis" className="page-item ellipsis">
+            <span className="page-link">…</span>
+          </li>
+        );
+      }
+      pageNumbers.push(
+        <li key={totalPages} className="page-item">
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(totalPages)}
+          >
+            {totalPages}
+          </button>
+        </li>
+      );
+    }
+
+    return pageNumbers;
+  };
+
+  return (
+    <main className="main-content">
+      <Content>
+        <div className="">
+          <div className="page-inner">
+            <div className="page-header d-flex justify-content-between align-items-center">
+              <h3 className="fw-bold mb-3">Render List</h3>
+              <div className="d-flex justify-content-end mb-3">
+                <button
+                  className="btn btn-link p-0"
+                  onClick={() => setIsFilterVisible(!isFilterVisible)}
+                  aria-label={isFilterVisible ? "Hide Filters" : "Show Filters"}
+                  title={isFilterVisible ? "Hide Filters" : "Show Filters"}
+                >
+                  <FaSearch
+                    size={25}
+                    className={isFilterVisible ? "text-primary" : "text-muted"}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Section */}
+            {isFilterVisible && (
+              <div className="row mb-4">
+                <div className="col-md-12">
+                  <div className="card">
+                    <div className="card-body filter-section">
+                      <div className="row g-3 align-items-end">
+                        <div className="col-md-3">
+                          <label className="form-label">Render No</label>
+                          <input
+                            type="text"
+                            name="renderNo"
+                            className="form-control"
+                            value={filters.renderNo}
+                            onChange={handleFilterChange}
+                            placeholder="Search by Render No"
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label">
+                            Completed Date (From)
+                          </label>
+                          <input
+                            type="date"
+                            name="startRenderCompletedDate"
+                            className="form-control"
+                            value={filters.startRenderCompletedDate}
+                            onChange={handleFilterChange}
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label">
+                            Completed Date (To)
+                          </label>
+                          <input
+                            type="date"
+                            name="endRenderCompletedDate"
+                            className="form-control"
+                            value={filters.endRenderCompletedDate}
+                            onChange={handleFilterChange}
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label">Status</label>
+                          <select
+                            name="status"
+                            className="form-control"
+                            value={filters.status}
+                            onChange={handleFilterChange}
+                          >
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
+                        </div>
+
+                        <div className="col-md-12 text-end mt-3">
+                          <button
+                            className="btn btn-outline-primary me-2"
+                            onClick={handleClearFilter}
+                            disabled={!Object.values(filters).some((v) => v)}
+                          >
+                            Clear Filters
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="row">
+              <div className="col-md-12">
+                <div className="card">
+                  <div className="card-body">
+                    {loading && (
+                      <div className="text-center py-4">
+                        <div className="spinner-border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
+                    )}
+                    {error && <p className="text-danger">{error}</p>}
+                    {!loading && !error && (
+                      <>
+                        <div className="table-responsive">
+                          <table className="display table table-striped table-hover customer-table">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                {/* <th>ID</th> */}
+                                <th>Render No</th>
+                                <th>Concept ID</th>
+                                <th>
+                                  Required <br /> Render Count
+                                </th>
+                                <th>
+                                  Render <br /> Brief Date
+                                </th>
+                                <th>
+                                  Render <br /> Completed Date
+                                </th>
+                                <th>Render Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.length > 0 ? (
+                                rows.map((row) => (
+                                  <tr key={row.id}>
+                                    <td>
+                                      <IoEye
+                                        className="action-icon"
+                                        onClick={() => handleViewrender(row.id)}
+                                      />
+                                    </td>
+                                    {/* <td>{row.id}</td> */}
+                                    <td>{row.renderNo}</td>
+                                    <td>{row.orderNo}</td>
+                                    <td>{row.reqRenderCount || "N/A"}</td>
+                                    <td>{row.renderBriefDate || "N/A"}</td>
+                                    <td>{row.renderCompletedDate || "N/A"}</td>
+                                    <td style={{ minWidth: "250px" }}>
+                                      {row.renderDesigners &&
+                                      Array.isArray(row.renderDesigners) &&
+                                      row.renderDesigners.length > 0
+                                        ? row.renderDesigners.map(
+                                            (renderDesigner, index) => (
+                                              <div key={index}>
+                                                {renderDesigner.name}
+                                              </div>
+                                            )
+                                          )
+                                        : "N/A"}
+                                    </td>
+                                    <td>{row.status}</td>
+                                    <td>
+                                      <FaEdit
+                                        className={`cursor-pointer ${
+                                          row.status === "Approved" ||
+                                          row.status === "Rejected"
+                                            ? "text-muted opacity-50"
+                                            : ""
+                                        }`}
+                                        onClick={() =>
+                                          row.status !== "Approved" &&
+                                          row.status !== "Rejected" &&
+                                          handleEdit(row.id)
+                                        }
+                                      />
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : isSearchActive ? (
+                                <tr>
+                                  <td colSpan="10" className="text-center">
+                                    No data found
+                                  </td>
+                                </tr>
+                              ) : (
+                                <tr>
+                                  <td colSpan="10" className="text-center">
+                                    No renders found
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Pagination - Only shown when not in search mode */}
+                        {!isSearchActive && (
+                          <div className="pagination-container mt-4">
+                            <div className="pagination-info text-muted">
+                              Showing {rows.length} of {totalRecords} records
+                            </div>
+                            <nav aria-label="Page navigation">
+                              <ul className="pagination justify-content-end">
+                                <li
+                                  className={`page-item ${
+                                    currentPage === 1 ? "disabled" : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handlePageChange(currentPage - 1)
+                                    }
+                                    disabled={currentPage === 1}
+                                    aria-label="Previous"
+                                  >
+                                    <FaChevronLeft />
+                                  </button>
+                                </li>
+                                {renderPageNumbers()}
+                                <li
+                                  className={`page-item ${
+                                    currentPage === totalPages ||
+                                    totalRecords === 0
+                                      ? "disabled"
+                                      : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handlePageChange(currentPage + 1)
+                                    }
+                                    disabled={
+                                      currentPage === totalPages ||
+                                      totalRecords === 0
+                                    }
+                                    aria-label="Next"
+                                  >
+                                    <FaChevronRight />
+                                  </button>
+                                </li>
+                              </ul>
+                            </nav>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Content>
+      <Footer />
+    </main>
+  );
+}
+
+export default RenderList;

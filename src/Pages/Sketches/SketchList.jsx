@@ -246,7 +246,6 @@ const SketchList = () => {
 
   return (
     <main className="main-content">
-    <br/>   <br/>   
       <Content>
         <div className="">
           <div className="page-inner">
@@ -278,7 +277,7 @@ const SketchList = () => {
                           <label className="form-label">Sketcher Name</label>
                           <select
                             name="userId"
-                            className="form-select"
+                            className="form-control"
                             value={filters.userId}
                             onChange={handleFilterChange}
                           >
@@ -319,7 +318,7 @@ const SketchList = () => {
                           <label className="form-label">Status</label>
                           <select
                             name="status"
-                            className="form-select"
+                            className="form-control"
                             value={filters.status}
                             onChange={handleFilterChange}
                           >
@@ -494,9 +493,9 @@ const SketchList = () => {
             </div>
           </div>
         </div>
-        </Content>
-    <Footer />
-  </main>
+      </Content>
+      <Footer />
+    </main>
   );
 };
 

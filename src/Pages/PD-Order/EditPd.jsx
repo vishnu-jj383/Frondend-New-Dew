@@ -347,7 +347,7 @@ function EditPd() {
     <main className="main-content">
    
     <Content>
-        <div className="container">
+        <div className="">
           <div className="page-inner">
             <div className="page-header">{/* <h5>Edit Render</h5> */}</div>
             <div className="card">

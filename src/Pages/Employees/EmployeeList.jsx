@@ -167,6 +167,10 @@ const EmployeeList = () => {
   };
 
   const totalPages = Math.ceil(totalRecords / rowsPerPage);
+  const handleViewEmployee = (empId) => {
+    navigate(`/view_employee/${empId}`);
+  };
+
 
   return (
     <main className="main-content">
@@ -318,6 +322,7 @@ const EmployeeList = () => {
                           >
                             <thead>
                               <tr>
+                                <th></th>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -330,6 +335,13 @@ const EmployeeList = () => {
                             <tbody>
                               {rows.map((employee) => (
                                 <tr key={employee.id}>
+                                   <td>
+                                    <IoEye
+                                      size={15}
+                                      className="action-icon"
+                                      onClick={() => handleViewEmployee(employee.id)}
+                                    />
+                                  </td>
                                   <td>{employee.id}</td>
                                   <td>{employee.name}</td>
                                   <td>{employee.email}</td>

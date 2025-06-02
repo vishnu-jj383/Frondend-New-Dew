@@ -100,11 +100,11 @@ function EditSkitch() {
       const savedToken = Cookies.get("authToken");
 
       const result = await Swal.fire({
-        title: "Do you want to save changes?",
+        title: "Do You Want To Save Changes?",
         icon: "question",
         showCancelButton: true,
-        confirmButtonText: "Yes, save it!",
-        cancelButtonText: "No, cancel",
+        confirmButtonText: "Yes, Save It!",
+        cancelButtonText: "No, Cancel",
       });
 
       if (!result.isConfirmed) {
@@ -142,7 +142,7 @@ function EditSkitch() {
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Sketch updated successfully.",
+        text: "Sketch Updated Successfully.",
       }).then(() => {
         navigate("/sketchList");
       });
@@ -165,7 +165,7 @@ function EditSkitch() {
 
   return (
     <main className="main-content">
-      <br /> <br />
+     
       <Content>
         <div className="">
           <div className="page-inner">

@@ -89,23 +89,55 @@
   width: 100% !important;
 }
 
-/* Table styling */
+/* RecentOrdersTable.css */
+
+/* Ensure table container is responsive with horizontal scrolling */
 .table-responsive {
-  overflow-x: auto;
-  padding: 0;
   width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+  padding: 0;
+  scrollbar-width: auto; /* Firefox: Use default scrollbar width for visibility */
+  scrollbar-color: #91b7b2 #ffffff; /* Firefox: Prominent teal thumb */
 }
 
-/* Recent orders table */
+/* Webkit browsers (Chrome, Safari): Custom scrollbar styles */
+.table-responsive::-webkit-scrollbar {
+  height: 10px; /* Slightly larger scrollbar for visibility */
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #ffffff; /* Scrollbar track color */
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #09e2c5; /* Prominent teal thumb */
+  border-radius: 5px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #07c4a7; /* Slightly darker teal on hover */
+}
+
+/* Base table styles */
 .recent-orders-table.table {
   --bs-table-striped-bg: transparent;
   --bs-table-bg: #ffffff;
   width: 100%;
-  min-width: 700px;
-  margin-bottom: 0;
   border-collapse: collapse;
+  margin-bottom: 0;
+  min-width: 600px; /* Ensure scrolling on smaller screens */
+  background: linear-gradient(135deg, #e6fafa30 0%, #e6fafa36 100%); /* Match ant-card styling */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
 }
 
+.recent-orders-table.table:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Match ant-card hover */
+}
+
+/* Table header and cell styles */
 .recent-orders-table th,
 .recent-orders-table td {
   vertical-align: middle;
@@ -114,8 +146,12 @@
   border: none;
   font-size: clamp(0.8rem, 1.8vw, 0.9rem);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncate long text */
+  max-width: 200px; /* Prevent overly wide columns */
 }
 
+/* Header styles */
 .recent-orders-table thead th {
   background-color: #09e2c536;
   font-weight: 600;
@@ -123,8 +159,10 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  color: #004d4d; /* Match dashboard color scheme */
 }
 
+/* Row styles */
 .recent-orders-table tbody tr {
   border-top: 1px solid #09e2c558;
 }
@@ -138,142 +176,98 @@
   color: #004d4d !important;
 }
 
+/* Order link styles */
 .recent-orders-table .order-link {
   color: #033838b6;
   text-decoration: underline;
   cursor: pointer;
   transition: color 0.2s ease-in-out;
+  touch-action: manipulation; /* Improve touch responsiveness */
+  padding: 0.3rem; /* Increase touch target size */
 }
 
 .recent-orders-table .order-link:hover {
   color: #238ef1;
 }
 
-.action-icon {
-  cursor: pointer;
-  transition: color 0.2s;
-  font-size: 1rem;
-}
-
-.action-icon:hover {
-  color: #007bff;
-}
-
-.action-icon.text-red-500:hover {
-  color: #dc3545;
-}
-
-/* Responsive design */
+/* Responsive adjustments for larger screens */
 @media (min-width: 769px) {
   .recent-orders-table {
-    min-width: 900px;
+    min-width: 700px; /* Slightly larger for desktop */
   }
 
   .recent-orders-table th,
   .recent-orders-table td {
     padding: clamp(0.6rem, 1.5vw, 0.8rem);
     font-size: clamp(0.85rem, 2vw, 0.95rem);
+    max-width: 250px; /* Wider columns for desktop */
   }
 }
 
+/* Tablet adjustments */
 @media (max-width: 1024px) {
-  .dashboard-grid-cols-4 {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .sidebar-open .dashboard-grid-cols-4 {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
-
-  .dashboard-grid-cols-2 {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-grid-cols-2 .ant-card {
-    min-height: clamp(260px, 30vw, 300px); /* Adjusted for tablet */
-  }
-
-  .ant-card-body .ant-chart,
-  .ant-card-body .chartjs-render-monitor {
-    height: clamp(200px, 22vw, 240px) !important; /* Adjusted for tablet */
-  }
-
-  .container {
-    padding: clamp(0.25rem, 0.75vw, 0.5rem);
-  }
-
-  .ant-card {
-    min-height: 100px;
-    padding: clamp(0.4rem, 0.8vw, 0.6rem);
-  }
-
-  .ant-card h2 {
-    font-size: clamp(1.1rem, 3vw, 1.3rem);
-  }
-
-  .ant-card .ant-card-head-title {
-    font-size: clamp(0.85rem, 1.8vw, 1rem);
-  }
-
   .recent-orders-table {
-    min-width: 550px;
+    min-width: 600px; /* Ensure scrolling on tablets */
   }
 
   .recent-orders-table th,
   .recent-orders-table td {
     padding: clamp(0.3rem, 1vw, 0.5rem);
     font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+    max-width: 150px; /* Tighter columns for tablets */
+  }
+
+  /* Force scrollbar visibility on tablets */
+  .table-responsive {
+    overflow-x: scroll; /* Always show scrollbar */
+    scrollbar-width: auto; /* Ensure visible scrollbar */
   }
 }
 
+/* Mobile adjustments */
 @media (max-width: 768px) {
-  .container {
-    margin-left: 0; /* No sidebar on mobile */
-    padding: clamp(0.2rem, 0.5vw, 0.4rem);
-  }
-
-  .dashboard-grid-cols-4,
-  .dashboard-grid-cols-2 {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-grid-cols-2 .ant-card {
-    min-height: clamp(220px, 25vw, 260px); /* Adjusted for mobile */
-  }
-
-  .ant-card {
-    min-height: 90px;
-    padding: clamp(0.3rem, 0.6vw, 0.5rem);
-  }
-
-  .ant-card h2 {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-  }
-
-  .ant-card .ant-card-head-title {
-    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  }
-
-  .ant-card-body .ant-chart,
-  .ant-card-body .chartjs-render-monitor {
-    height: clamp(160px, 20vw, 200px) !important; /* Adjusted for mobile */
-  }
-
   .recent-orders-table {
-    min-width: 450px;
+    min-width: 600px; /* Ensure horizontal scrolling */
   }
 
   .recent-orders-table th,
   .recent-orders-table td {
     padding: clamp(0.25rem, 0.8vw, 0.4rem);
     font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+    max-width: 120px; /* Narrower columns for mobile */
   }
 
-  /* Hide Designer Name and Promised Date on mobile */
-  .recent-orders-table th:nth-child(4),
-  .recent-orders-table td:nth-child(4),
-  .recent-orders-table th:nth-child(5),
-  .recent-orders-table td:nth-child(5) {
-    display: none;
+  /* Force scrollbar visibility and enhance touch scrolling */
+  .table-responsive {
+    overflow-x: scroll; /* Always show scrollbar */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: auto; /* Ensure visible scrollbar */
+  }
+
+  .recent-orders-table .order-link {
+    padding: 0.4rem; /* Larger touch target for mobile */
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .recent-orders-table {
+    min-width: 600px; /* Maintain min-width for scrolling */
+  }
+
+  .recent-orders-table th,
+  .recent-orders-table td {
+    padding: clamp(0.2rem, 0.6vw, 0.3rem);
+    font-size: clamp(0.65rem, 1.4vw, 0.75rem);
+    max-width: 100px; /* Very narrow columns for small screens */
+  }
+
+  .recent-orders-table .order-link {
+    padding: 0.5rem; /* Even larger touch target */
+  }
+
+  /* Force scrollbar visibility */
+  .table-responsive {
+    overflow-x: scroll; /* Always show scrollbar */
   }
 }

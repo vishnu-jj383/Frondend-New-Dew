@@ -1,0 +1,37 @@
+/* ========== Table Styling ========== */
+
+/* Table Borders */
+/* .table thead th {
+    border: 2px solid #dee2e6;
+    text-align: center;
+    vertical-align: middle;
+  }
+   */
+  /* Sketch Section */
+  .sketch-section {
+    background-color: #d0ebff !important;
+    font-weight: bold;
+  }
+  
+  /* CAD Section */
+  .cad-section {
+    background-color: #d3f9d8 !important;
+    font-weight: bold;
+  }
+  
+  /* Render Section */
+  .render-section {
+    background-color: #ffe8cc !important;
+    font-weight: bold;
+  }
+  
+  /* Row Hover */
+  tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  /* Table Borders */
+  /* .table td, .table th {
+    border: 1px solid #dee2e6 !important;
+  } */
+  

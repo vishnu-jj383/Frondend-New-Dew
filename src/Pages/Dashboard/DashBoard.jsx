@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Card, Select, DatePicker, Modal } from "antd";
-import { Column } from '@ant-design/plots';
+import { Column } from "@ant-design/plots";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import Header from "../../Components/Header";
@@ -42,13 +42,19 @@ const DashBoard = () => {
         }
       );
       setData(response.data);
-      console.log("Order Status Breakdown Data:", response.data.orderStatusBreakdown);
+      console.log(
+        "Order Status Breakdown Data:",
+        response.data.orderStatusBreakdown
+      );
     } catch (err) {
-      if (err.response?.data?.message === "Token expired, please login again") {
+      
+      if (err.response?.data?.message === "Token expired, please login again" || "Invalid token, please login again") {
         setSessionExpired(true);
       }
       setError(
-        `Failed to fetch dashboard data: ${err.response?.data?.message || err.message}`
+        `Failed to fetch dashboard data: ${
+          err.response?.data?.message || err.message
+        }`
       );
     } finally {
       setLoading(false);
@@ -73,11 +79,13 @@ const DashBoard = () => {
       );
       setBarData(response.data);
     } catch (err) {
-      if (err.response?.data?.message === "Token expired, please login again") {
+      if (err.response?.data?.message === "Token expired, please login again" || "Invalid token, please login again") {
         setSessionExpired(true);
       } else {
         setBarError(
-          `Failed to fetch bar chart data: ${err.response?.data?.message || err.message}`
+          `Failed to fetch bar chart data: ${
+            err.response?.data?.message || err.message
+          }`
         );
       }
     } finally {
@@ -95,7 +103,7 @@ const DashBoard = () => {
 
   const BarChartSection = () => (
     <Card title="Orders Trend" bordered={false}>
-      <div style={{ marginBottom: '0.5rem' }}>
+      <div style={{ marginBottom: "0.5rem" }}>
         <Select
           value={filterType}
           onChange={(value) => {
@@ -171,7 +179,9 @@ const DashBoard = () => {
     datasets: [
       {
         data: orderStatusData.map((item) => item.value),
-        backgroundColor: orderStatusData.map((item) => statusColors[item.type] || "#20c99a"),
+        backgroundColor: orderStatusData.map(
+          (item) => statusColors[item.type] || "#20c99a"
+        ),
         borderWidth: 1,
         hoverOffset: 10,
       },
@@ -215,6 +225,7 @@ const DashBoard = () => {
 
   return (
     <main className="main-content">
+    
       <Content>
         <div className="">
           {loading && <div>Loading dashboard...</div>}
@@ -222,91 +233,121 @@ const DashBoard = () => {
           {!loading && !error && (
             <>
               <div className="dashboard-grid dashboard-grid-cols-4">
-                <Card className="custom-card total-orders" title="Total Orders" bordered={false}>
+                <Card
+                  className="custom-card total-orders"
+                  title="Total Orders"
+                  bordered={false}
+                >
                   <h2>{data?.totalOrders || 0}</h2>
                 </Card>
-                <Card className="custom-card total-orders" title="Orders in Progress" bordered={false}>
+                <Card
+                  className="custom-card total-orders"
+                  title="Orders in Progress"
+                  bordered={false}
+                >
                   <h2>{data?.ordersInProgress || 0}</h2>
                 </Card>
-                <Card className="custom-card total-orders" title="Completed Orders" bordered={false}>
+                <Card
+                  className="custom-card total-orders"
+                  title="Completed Orders"
+                  bordered={false}
+                >
                   <h2>{data?.completedOrders || 0}</h2>
                 </Card>
-                <Card className="custom-card total-orders" title="Total Customers" bordered={false}>
+                <Card
+                  className="custom-card total-orders"
+                  title="Total Customers"
+                  bordered={false}
+                >
                   <h2>{data?.totalCustomers || 0}</h2>
                 </Card>
               </div>
-
+              <br />
               <div className="dashboard-grid dashboard-grid-cols-2">
                 <Card title="Order Progress" bordered={false}>
-                  <Doughnut data={doughnutData} options={doughnutOptions} style={{width:"90%"}} />
+                  <Doughnut
+                    data={doughnutData}
+                    options={doughnutOptions}
+                    style={{ width: "90%" }}
+                  />
                 </Card>
                 <BarChartSection />
               </div>
-
-              <div className="dashboard-grid dashboard-grid-cols-1">
-                <Card title="Recent Orders" bordered={false}>
-                  <div className="table-responsive">
-                    <table className="table table-striped table-hover recent-orders-table">
-                      <thead>
-                        <tr>
-                          <th>Order No</th>
-                          <th>Status</th>
-                          <th>Customer Name</th>
-                          <th>Designer Name</th>
-                          <th>Promised Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data?.recentOrders?.map((row) => (
-                          <tr key={row.id}>
-                            <td>
-                              <span
-                                className="order-link"
-                                onClick={() => handleViewOrder(row.id)}
-                                role="button"
-                                aria-label={`View order ${row.orderNo}`}
-                              >
-                                {row.orderNo}
-                              </span>
-                            </td>
-                            <td>{row.orderStatus}</td>
-                            <td>{row.customerName}</td>
-                            <td>
-                              {(() => {
-                                if (!row.designerName || (Array.isArray(row.designerName) && row.designerName.length === 0)) {
-                                  return <div>No designer</div>;
-                                }
-                                if (Array.isArray(row.designerName)) {
-                                  return row.designerName.map((designer, index) => (
-                                    <div key={index}>
-                                      {typeof designer === "string" ? designer : designer.designerName || "Unknown"}
-                                    </div>
-                                  ));
-                                }
-                                return <div>{row.designerName}</div>;
-                              })()}
-                            </td>
-                            <td>{row.promiseDate}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-              </div>
+              <br />
+          <div className="p-4">
+            <Card title="Recent Orders" bordered={false}>
+              <div className="table-responsive">
+      {data?.recentOrders?.length > 0 ? (
+         <table className="display table table-striped table-hover relative recent-orders-table">
+          <thead>
+            <tr>
+              <th>Order No</th>
+              <th>Status</th>
+              <th>Customer Name</th>
+              <th>Designer Name</th>
+              <th>Promised Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.recentOrders.map((row) => (
+              <tr key={row.id}>
+                <td>
+                  <span
+                    className="order-link"
+                    onClick={() => handleViewOrder(row.id)}
+                    role="button"
+                    aria-label={`View order ${row.orderNo}`}
+                  >
+                    {row.orderNo}
+                  </span>
+                </td>
+                <td>{row.orderStatus}</td>
+                <td>{row.customerName}</td>
+                <td>
+                  {(() => {
+                    if (
+                      !row.designerName ||
+                      (Array.isArray(row.designerName) &&
+                        row.designerName.length === 0)
+                    ) {
+                      return <div>No designer</div>;
+                    }
+                    if (Array.isArray(row.designerName)) {
+                      return row.designerName.map((designer, index) => (
+                        <div key={index}>
+                          {typeof designer === 'string'
+                            ? designer
+                            : designer.designerName || 'Unknown'}
+                        </div>
+                      ));
+                    }
+                    return <div>{row.designerName}</div>;
+                  })()}
+                </td>
+                <td>{row.promiseDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div>No recent orders available</div>
+      )}
+    </div>
+  </Card>
+</div>
             </>
           )}
         </div>
       </Content>
       <Footer />
-
       <Modal
         title="Session Expired"
         open={sessionExpired}
         onOk={handleSessionExpired}
-        onCancel={handleSessionExpired}
+        // onCancel={handleSessionExpired}
         okText="Login Again"
         cancelText="Cancel"
+        cancelButtonProps={{ disabled: true }} // Disable Cancel button
       >
         <p>Your session has expired. Please log in again to continue.</p>
       </Modal>

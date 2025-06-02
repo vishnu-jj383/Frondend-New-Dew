@@ -1,0 +1,60 @@
+/* Sketch Card Main Container */
+.sketch-card-container {
+    padding: 20px;
+  }
+  
+  /* Card Grid Layout */
+  .card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  
+  /* Individual Card Styling */
+  .card-item {
+    flex: 1 1 calc(25% - 20px); /* Default: 4 cards per row */
+    max-width: calc(25% - 20px);
+    box-sizing: border-box;
+  }
+  
+  /* Card Image Styling */
+  .card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Ant Design Button Styling */
+  .antd_btn {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .antd_btn:hover {
+    background-color: #40a9ff;
+  }
+  
+  /* RESPONSIVE DESIGN */
+  
+  /* Medium Screens (Tablets) - 2 Cards Per Row */
+  @media screen and (max-width: 1024px) {
+    .card-item {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+    }
+  }
+  
+  /* Small Screens (Phones) - 1 Card Per Row */
+  @media screen and (max-width: 600px) {
+    .card-item {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+  

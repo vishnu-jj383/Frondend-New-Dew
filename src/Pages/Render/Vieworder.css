@@ -1,0 +1,201 @@
+/* 💎 Premium Styling for View Order Page */
+.vieworder-container {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: auto;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px;
+}
+
+/* ✨ Elegant Blue Title */
+.vieworder-heading {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    color: #0277bd; /* Deep Blue */
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 4px 10px rgba(2, 119, 189, 0.4);
+}
+
+/* 🏆 Layout for Cards */
+.vieworder-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    justify-content: center;
+    align-items: start; /* Ensures cards align at the top */
+}
+
+/* 🏆 General Card Styling */
+.vieworder-card {
+    background: #f1f9fc; /* Light Blue Card Background */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 12px 35px rgba(0, 74, 136, 0.2);
+    transition: all 0.4s ease-in-out;
+    border: 1px solid #ddeeff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 400px; /* Increased height for uniformity */
+}
+
+/* 🏆 Set Equal Height for Non-Image Cards */
+.vieworder-card:not(.image-card) {
+    min-height: 400px; /* Set a fixed height for uniformity */
+}
+
+/* 🏆 Glow Effect on Hover */
+.vieworder-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(2, 119, 189, 0.5);
+}
+
+/* 🔥 Card Titles */
+.vieworder-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0277bd;
+    margin-bottom: 12px;
+    border-bottom: 2px solid rgba(2, 119, 189, 0.5);
+    padding-bottom: 5px;
+    text-transform: uppercase;
+}
+
+/* 💎 Text Styles */
+.vieworder-card p {
+    font-size: 17px;
+    color: #333;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+/* 🖼 Image Card Styling (Dynamic Height) */
+.vieworder-card.image-card {
+    text-align: center;
+    background: linear-gradient(135deg, #dbe8f0, #aec6cf);
+    border: none;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px; /* Increased height for image card */
+}
+
+/* 🏆 Image Styling (50% Reduced Size) */
+.vieworder-card.image-card img {
+    width: 50%;  /* Reduced width */
+    height: 50%; /* Reduced height */
+    object-fit: cover; /* Keeps proportions */
+    border-radius: 12px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 3px solid #d1e7f3;
+    background-color: #fff;
+}
+
+/* 🏆 Center the image inside the card */
+.vieworder-card.image-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* 🏆 Image Hover Effect */
+.vieworder-card.image-card img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(2, 119, 189, 0.4);
+}
+
+/* 🏆 Employee List - Modern */
+.vieworder-card .employee-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.vieworder-card .employee-list li {
+    font-size: 17px;
+    background: rgba(2, 119, 189, 0.2);
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    font-weight: bold;
+    color: #222;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 🏆 Employee Hover Effect */
+.vieworder-card .employee-list li:hover {
+    background: rgba(2, 119, 189, 0.5);
+    transform: scale(1.05);
+    color: #fff;
+}
+
+/* 📱 Responsive Styling */
+@media (max-width: 768px) {
+    .vieworder-heading {
+        font-size: 28px;
+    }
+
+    .vieworder-card {
+        padding: 18px;
+    }
+
+    .vieworder-card h3 {
+        font-size: 20px;
+    }
+
+    .vieworder-card p {
+        font-size: 15px;
+    }
+
+    /* Allow image card height to be dynamic on mobile */
+    .vieworder-card.image-card img {
+        max-height: none;
+    }
+
+    /* Adjust non-image cards to be consistent on mobile */
+    .vieworder-card:not(.image-card) {
+        height: auto;
+        min-height: 400px; /* Ensures some uniformity */
+    }
+}
+
+
+.btn.print-btn {
+    display: flex; /* Align icon and text inside button */
+    align-items: center; /* Center vertically */
+    gap: 8px; /* Space between icon and text */
+    padding: 8px 16px; /* Compact padding */
+    font-size: 14px; /* Control text size */
+    width: auto; /* Let button size naturally */
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+
+.print-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#vieworder-container {
+    padding: 20px;
+    font-size: 14px;
+}
+
+.vieworder-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.vieworder-card p {
+    margin-bottom: 5px;
+}
+

@@ -1,0 +1,115 @@
+/* Page Background */
+.content-wrapper {
+  background-image: url('../DewAlbum/dew-icon.webp');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Grid Layout */
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: center;
+}
+
+/* Design Card */
+.design-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 320px; /* Consistent size */
+  height: auto;
+}
+
+.design-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Image Styling */
+.design-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+}
+
+/* Information Styling */
+.design-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 15px;
+}
+
+.design-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.design-info p {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 4px 0;
+}
+
+/* Feedback Button */
+.feedback-btn {
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  width: 100%;
+  transition: background 0.3s ease;
+}
+
+.feedback-btn:hover {
+  background: #0056b3;
+}
+
+.feedback-btn {
+  margin-top: 10px;
+  margin-bottom: 15px; /* Added spacing below */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 20px;
+  }
+
+  .design-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .design-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .design-image {
+    height: 180px;
+  }
+}

@@ -9,12 +9,12 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { FaUpload } from "react-icons/fa";
-import Footer from "../Footer";
-import Header from "../Header";
-import SideBar from "../SideBar";
+import Footer from "../../Components/Footer";
+import Content from "../../Components/Content";
+
 import Cookies from "js-cookie";
 import { Modal, Image } from "antd";
-import { useSelector } from "react-redux";
+
 
 function GetSketchDesigner() {
   const API_URL = window.url + "tasks/getTasksByOrderIdOrType";
@@ -26,8 +26,7 @@ function GetSketchDesigner() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
-
+ 
   const navigate = useNavigate();
   const { orderId } = useParams();
   // Filters State
@@ -69,7 +68,7 @@ function GetSketchDesigner() {
           // alert(response.data.tasks[0].id)
         } else {
           console.error("Unexpected API response format:", response.data);
-          setError(`Invalid API response format.,${err.response?.data?.message}`);
+          setError(`Invalid API response format.,${error.response?.data?.message}`);
         }
       } catch (err) {
         console.error("API Fetch Error:", err);
@@ -106,11 +105,10 @@ function GetSketchDesigner() {
   const totalPages = Math.ceil(totalRecords / rowsPerPage);
 
   return (
-    <div className={`wrapper ${sideBarState ? "sidebar_minimize" : ""}`}>
-      <SideBar pageName="userrolePermissions" />
-      <div className="main-panel">
-        <Header />
-        <div className="container">
+      <main className="main-content">
+    
+      <Content>
+        <div className="">
           <div className="page-inner">
            
             <div className="page-header">
@@ -179,7 +177,7 @@ function GetSketchDesigner() {
                                             <Image
                                               key={index}
                                               src={img}
-                                              width="90%"
+                                              width="60%"
                                               alt={`image-${index}`}
                                             />
                                           ))}
@@ -341,9 +339,9 @@ function GetSketchDesigner() {
           </div>
         </div>
 
-        <Footer />
-      </div>
-    </div>
+       </Content>
+    <Footer />
+  </main>
   );
 }
 

@@ -130,7 +130,7 @@ const ApprovalLists = () => {
     if (value === "Rejected") {
       const { value: inputReason } = await Swal.fire({
         title: "Reason for Rejection",
-        input: "text",
+        input: "textarea",
         inputPlaceholder: "Enter the reason for rejection...",
         showCancelButton: true,
         confirmButtonText: "Submit",
@@ -164,8 +164,7 @@ const ApprovalLists = () => {
         icon: "success",
         title: "Approved!",
         text: "Sketch status updated successfully.",
-      })
-      
+      });
     } catch (error) {
       if (
         error.response &&
@@ -250,7 +249,7 @@ const ApprovalLists = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const savedToken = Cookies.get("authToken");
-    
+
     if (!savedToken) {
       Swal.fire({
         icon: "warning",
@@ -259,7 +258,7 @@ const ApprovalLists = () => {
       });
       return;
     }
-    
+
     if (!designerName || !startDate || !endDate) {
       Swal.fire({
         icon: "warning",
@@ -272,7 +271,7 @@ const ApprovalLists = () => {
     // Add date comparison
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     if (end < start) {
       Swal.fire({
         icon: "warning",
@@ -281,7 +280,7 @@ const ApprovalLists = () => {
       });
       return;
     }
-    
+
     const dataToSend = {
       id: selectedRowId,
       empId: designerName,
@@ -289,7 +288,7 @@ const ApprovalLists = () => {
       endDate: end.toISOString().split("T")[0],
       type: "sketch",
     };
-    
+
     try {
       const response = await axios.put(
         window.url + "sketch/addSketcher",
@@ -301,20 +300,19 @@ const ApprovalLists = () => {
           },
         }
       );
-      
+
       Swal.fire({
         icon: "success",
         title: "Sketch Designer Created",
         text: "Sketch Designer Created",
       });
-      
+
       await fetchOrders();
-      
+
       setDesignerName("");
       setStartDate("");
       setEndDate("");
       setIsModalOpen(false);
-      
     } catch (error) {
       console.error(
         "Error creating Cad Designer:",
@@ -330,11 +328,11 @@ const ApprovalLists = () => {
             : error.message),
       });
     }
-};
+  };
 
-const handleFormAndImageUpload = async (e) => {
+  const handleFormAndImageUpload = async (e) => {
     await handleSubmit(e);
-};
+  };
   const ViewDesignerButton = (orderId) => {
     navigate(`/sketch_designer/${orderId}`);
   };
@@ -468,9 +466,9 @@ const handleFormAndImageUpload = async (e) => {
 
     return pageNumbers;
   };
+
   return (
     <main className="main-content">
-    <br/>   <br/>   
       <Content>
         <div className="">
           <div className="page-inner">
@@ -499,7 +497,7 @@ const handleFormAndImageUpload = async (e) => {
                           <label className="form-label">Sketcher Name</label>
                           <select
                             name="userId"
-                            className="form-select"
+                            className="form-control"
                             value={filters.userId}
                             onChange={handleFilterChange}
                           >
@@ -540,7 +538,7 @@ const handleFormAndImageUpload = async (e) => {
                           <label className="form-label">Status</label>
                           <select
                             name="status"
-                            className="form-select"
+                            className="form-control"
                             value={filters.status}
                             onChange={handleFilterChange}
                           >
@@ -613,10 +611,13 @@ const handleFormAndImageUpload = async (e) => {
                             <tbody>
                               {rows.length > 0 ? (
                                 rows.map((row) => (
-                                  <tr key={row.id}>
+                                  <tr
+                                    key={row.id}
+                                    title={`Sketch No: ${row.sketchNo}`} // Add tooltip with sketchNo
+                                  >
                                     <td>
                                       <IoEye
-                                       className="action-icon"
+                                        className="action-icon"
                                         onClick={() => handleViewsketch(row.id)}
                                       />
                                     </td>
@@ -646,7 +647,9 @@ const handleFormAndImageUpload = async (e) => {
                                     >
                                       <div>
                                         <button
-                                          onClick={() => handleAddDesignerClick(row.id)}
+                                          onClick={() =>
+                                            handleAddDesignerClick(row.id)
+                                          }
                                           className="btn btn-sm"
                                           style={{
                                             backgroundColor: "#2E1A47",
@@ -665,26 +668,41 @@ const handleFormAndImageUpload = async (e) => {
                                               <div className="modal-header">
                                                 <h5>Add Sketch Designer</h5>
                                               </div>
-                                              <form onSubmit={handleFormAndImageUpload}>
+                                              <form
+                                                onSubmit={
+                                                  handleFormAndImageUpload
+                                                }
+                                              >
                                                 <div className="modal-body">
                                                   <div className="row">
                                                     <div className="col-md-6">
                                                       <div className="form-group">
-                                                        <label>Designer Name</label>
+                                                        <label>
+                                                          Designer Name
+                                                        </label>
                                                         <select
                                                           className="form-select pd-select"
                                                           id="settingType"
                                                           value={designerName}
                                                           onChange={(e) =>
-                                                            setDesignerName(e.target.value)
+                                                            setDesignerName(
+                                                              e.target.value
+                                                            )
                                                           }
                                                         >
-                                                          <option value="">Select</option>
-                                                          {designer_name_array.map((type) => (
-                                                            <option key={type.id} value={type.id}>
-                                                              {type.name}
-                                                            </option>
-                                                          ))}
+                                                          <option value="">
+                                                            Select
+                                                          </option>
+                                                          {designer_name_array.map(
+                                                            (type) => (
+                                                              <option
+                                                                key={type.id}
+                                                                value={type.id}
+                                                              >
+                                                                {type.name}
+                                                              </option>
+                                                            )
+                                                          )}
                                                         </select>
                                                       </div>
                                                     </div>
@@ -692,13 +710,17 @@ const handleFormAndImageUpload = async (e) => {
                                                   <div className="row">
                                                     <div className="col-md-6">
                                                       <div className="form-group">
-                                                        <label>Start Date</label>
+                                                        <label>
+                                                          Start Date
+                                                        </label>
                                                         <input
                                                           type="date"
                                                           className="form-control"
                                                           value={startDate}
                                                           onChange={(e) =>
-                                                            setStartDate(e.target.value)
+                                                            setStartDate(
+                                                              e.target.value
+                                                            )
                                                           }
                                                           required
                                                         />
@@ -712,7 +734,9 @@ const handleFormAndImageUpload = async (e) => {
                                                           className="form-control"
                                                           value={endDate}
                                                           onChange={(e) =>
-                                                            setEndDate(e.target.value)
+                                                            setEndDate(
+                                                              e.target.value
+                                                            )
                                                           }
                                                           required
                                                         />
@@ -721,7 +745,10 @@ const handleFormAndImageUpload = async (e) => {
                                                   </div>
                                                 </div>
                                                 <div className="modal-footer">
-                                                  <button type="submit" className="btn btn-success">
+                                                  <button
+                                                    type="submit"
+                                                    className="btn btn-success"
+                                                  >
                                                     Submit
                                                   </button>{" "}
                                                   &nbsp;
@@ -747,7 +774,9 @@ const handleFormAndImageUpload = async (e) => {
                                     >
                                       <div>
                                         <button
-                                          onClick={() => ViewDesignerButton(row.id)}
+                                          onClick={() =>
+                                            ViewDesignerButton(row.id)
+                                          }
                                           className="btn btn-sm"
                                           style={{
                                             backgroundColor: "#342D7E",
@@ -767,7 +796,10 @@ const handleFormAndImageUpload = async (e) => {
                                       <select
                                         value={row.status}
                                         onChange={(e) =>
-                                          handleApprovalChange(row.id, e.target.value)
+                                          handleApprovalChange(
+                                            row.id,
+                                            e.target.value
+                                          )
                                         }
                                         className="form-select"
                                         disabled={
@@ -778,33 +810,52 @@ const handleFormAndImageUpload = async (e) => {
                                         <option value="Pending" disabled>
                                           Pending
                                         </option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">
+                                          Approved
+                                        </option>
+                                        <option value="Rejected">
+                                          Rejected
+                                        </option>
                                       </select>
                                     </td>
                                     <td
                                       style={{
                                         minWidth: "200px",
                                         whiteSpace: "pre-line",
-                                        color:"black"
+                                        color: "black",
                                       }}
                                     >
                                       <button
-                                      style={{color:"black"}}
-                                        onClick={() => handleMoveToSkitch(row.id)}
+                                        // style={{color:"black"}}
+                                        onClick={() =>
+                                          handleMoveToSkitch(row.id)
+                                        }
+                                        className="btn btn-sm"
+                                        style={{
+                                          backgroundColor:
+                                            row.sketchStatus !== "sketch"
+                                              ? "#0056b3"
+                                              : "orange",
+                                          animation:
+                                            row.sketchStatus === "sketch" &&
+                                            row.status === "Approved"
+                                              ? "blink 1s infinite"
+                                              : "none",
+                                          color: "white",
+                                        }}
                                         disabled={
                                           row.sketchStatus !== "sketch" ||
                                           row.status !== "Approved"
                                         }
-                                        className={`btn btn-sm ${
-                                          row.sketchStatus !== "sketch"
-                                            ? "btn-secondary"
-                                            : "btn-success"
-                                        }`}
+                                        // className={`btn btn-sm ${
+                                        //   row.sketchStatus !== "sketch"
+                                        //     ? "btn-secondary"
+                                        //     : "btn-success"
+                                        // }`}
                                       >
                                         {row.sketchStatus !== "sketch"
-                                          ?"btn-secondary" && "Moved to CAD"
-                                          :  "btn-secondary" && "Move to CAD"}
+                                          ? "btn-success" && "Moved to CAD"
+                                          : "btn-info" && "Move to CAD"}
                                       </button>
                                     </td>
                                   </tr>
@@ -887,9 +938,9 @@ const handleFormAndImageUpload = async (e) => {
             </div>
           </div>
         </div>
-        </Content>
-    <Footer />
-  </main>
+      </Content>
+      <Footer />
+    </main>
   );
 };
 

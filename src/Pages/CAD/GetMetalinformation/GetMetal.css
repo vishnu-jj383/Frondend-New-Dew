@@ -1,0 +1,93 @@
+style.css
+
+/* Table section */
+.get-metal-table-section {
+    margin-bottom: 20px;
+  }
+  
+  .get-metal-table-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Table wrapper for scrolling */
+  .get-metal-table-wrapper {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on touch devices */
+  }
+  
+  /* Responsive table */
+  .get-metal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 800px; /* Minimum width to ensure scrolling is needed on small screens */
+  }
+  
+  .get-metal-table th,
+  .get-metal-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  
+  .get-metal-table th {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .get-metal-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Action button */
+  .get-metal-table .btn-danger {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+  
+  /* Total weight */
+  .get-metal-total-weight {
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  /* Responsive adjustments for table only */
+  @media (max-width: 768px) {
+    .get-metal-table-section h3 {
+      font-size: 1.1rem;
+    }
+  
+    .get-metal-table-wrapper {
+      margin-bottom: 10px; /* Space between table and total weight */
+    }
+  
+    .get-metal-table {
+      font-size: 0.85rem; /* Slightly smaller font for readability */
+    }
+  
+    .get-metal-table th,
+    .get-metal-table td {
+      padding: 6px; /* Reduced padding for compactness */
+    }
+  
+    .get-metal-table .btn-danger {
+      padding: 3px 6px; 
+    }
+  
+    .get-metal-total-weight {
+      text-align: right; /* Keep alignment consistent */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .get-metal-table {
+      font-size: 0.8rem;
+    }
+  
+    .get-metal-table th,
+    .get-metal-table td {
+      padding: 5px;
+    }
+  }

@@ -1,0 +1,175 @@
+.view-customer-album {
+  padding: 20px;
+}
+
+.control-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.control-left {
+  display: flex;
+  align-items: center;
+}
+
+.selection-count {
+  font-size: 1rem;
+  color: #333;
+}
+
+.control-right {
+  display: flex;
+  align-items: center;
+}
+
+.btn-primary {
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+.btn-outline-secondary {
+  padding: 8px 20px;
+}
+
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.design-card {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.design-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.card-checkbox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.checkbox-label {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.checkbox-label input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 2px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-label .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.card-header {
+  padding: 12px 15px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.design-heading {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: 0.2px;
+  word-wrap: break-word; /* Allows text to wrap */
+  max-width: 85%; /* Still prevents overlap with checkbox */
+  line-height: 1.4; /* Improves readability for wrapped text */
+}
+
+.design-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.design-info {
+  padding: 15px;
+}
+
+.design-info p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.status-container {
+  margin-top: 10px;
+}
+
+.status-badge {
+  margin-left: 5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-badge.sent {
+  background-color: #28a745;
+}
+
+.status-badge.not-sent {
+  background-color: #dc3545;
+}
+
+.alert {
+  margin-top: 20px;
+}

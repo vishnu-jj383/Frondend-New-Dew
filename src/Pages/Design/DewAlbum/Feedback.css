@@ -1,0 +1,171 @@
+/* Feedback Card */
+.specifications-container {
+  background-color: #222;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  color: white;
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.6;
+  border: 1px solid #444;
+}
+.specifications-container h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.specifications-container p {
+  margin: 0;
+}
+.feedback-card {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e3e3e3;
+  transition: all 0.3s ease-in-out;
+}
+
+.feedback-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Title Styling */
+.feedback-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Custom Styled Select Box */
+.custom-select {
+  width: 100% !important;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid #ccc;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.custom-select:hover {
+  border-color: #007bff;
+  box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.2);
+}
+
+.custom-select .ant-select-selector {
+  border-radius: 10px !important;
+  border: none !important;
+  padding: 10px !important;
+  background: #f8f9fa !important;
+  transition: 0.3s;
+}
+
+.custom-select .ant-select-arrow {
+  color: #007bff;
+}
+
+.custom-select .ant-select-selection-item {
+  font-weight: 600;
+  color: #444;
+}
+
+/* TextArea Styling */
+.feedback-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  font-size: 16px;
+  transition: 0.3s;
+  background: #fff;
+}
+
+.feedback-textarea:hover,
+.feedback-textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.2);
+}
+
+/* Submit Button Styling */
+.feedback-button {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+  transition: 0.3s ease-in-out;
+}
+
+.feedback-button:hover {
+  background: linear-gradient(135deg, #0056b3, #003c7c);
+  transform: scale(1.05);
+}
+
+
+/* New Styles for Table Scroll */
+
+/* Wrapper for responsive table with horizontal scrolling */
+.table-wrapper {
+  overflow-x: auto;  /* Enables horizontal scrolling on smaller screens */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  min-width: 600px;  /* Set a minimum width to ensure content doesn't break */
+  border-collapse: collapse;  /* Remove space between cells */
+}
+
+/* Header styling */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9;  /* Light background for the header */
+  z-index: 1;
+  padding: 12px 16px;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+}
+
+/* Table cell styling */
+table th, table td {
+  padding: 10px 16px;
+  text-align: left;
+}
+
+/* Optional: Add alternating row colors for better readability */
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Make sure the table takes full width */
+table td, table th {
+  word-wrap: break-word;  /* Prevent long content from overflowing */
+}
+
+/* Hide dividing lines, if no borders are needed */
+table td, table th {
+  border: none; /* Optional if you want to remove the borders */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  table {
+    width: 100%;
+    table-layout: auto; /* Adjust table layout for better fit */
+  }
+
+  table th, table td {
+    padding: 8px 12px;  /* Adjust padding for smaller screens */
+  }
+}

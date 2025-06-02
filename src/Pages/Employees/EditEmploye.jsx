@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Footer from "../Footer";
-import Header from "../Header";
-import SideBar from "../SideBar";
+import Footer from "../../Components/Footer";
+import Content from "../../Components/Content";
 import { useNavigate, useParams } from "react-router"; // useParams to get the customerId from URL
 import Cookies from "js-cookie";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 function EditEmploye() {
   const navigate = useNavigate();
   const { id } = useParams(); // Get customerId from URL
-  const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
+  // const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
   const employeAPI_URL = window.url + `auth/getUserById/${id}`;
   const getRole_Url = window.url + "auth/getAllRoles";
   const emp_URL = window.url + "auth/getAllUsers";
   const [role_array, setRole_array] = useState([]);
   const [emp_array, setEmp_array] = useState([]);
+  const[error,setError]=useState()
+  const[loading,setLoading]=useState()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -219,7 +220,7 @@ function EditEmploye() {
         timer: 1500,
       });
 
-      navigate("/employeeLists");
+      navigate("/list_employe");
     } catch (error) {
       console.error(
         "Error updating employee:",
@@ -237,11 +238,9 @@ function EditEmploye() {
   };
 
   return (
-    <div className={`wrapper ${sideBarState ? "sidebar_minimize" : ""}`}>
-      <SideBar />
-      <div className="main-panel">
-        <Header />
-        <div className="container">
+    <main className="main-content">
+      <Content>
+        <div className="">
           <div className="page-inner">
             <div className="page-header"></div>
 
@@ -473,9 +472,9 @@ function EditEmploye() {
           </div>
         </div>
 
-        <Footer />
-      </div>
-    </div>
+        </Content>
+      <Footer />
+    </main>
   );
 }
 
