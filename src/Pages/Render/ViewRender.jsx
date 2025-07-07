@@ -352,9 +352,10 @@ function ViewRender() {
             <div className="vieworder-header">
               <button
                 onClick={handlePrint}
-                className="btn btn-primary print-btn"
+               className="btn btn-link p-0 me-2"
+                 title="Download PDF"
               >
-                <FaPrint /> Print PDF
+                <FaPrint size={25} className="text-muted"  /> 
               </button>
               <h4 className="vieworder-heading">
                 {order.categoryGroup?.category_group_name || "Order Details"}

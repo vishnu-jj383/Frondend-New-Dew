@@ -458,10 +458,13 @@ function ListCustomer() {
                                     <td>{row.customer_country}</td>
                                     <td>
                                       <FaEdit
+                                      size={15}
                                         className="text-blue-500 action-icon"
                                         onClick={() => handleEdit(row.id)}
-                                      />{" "}
+                                      />{" "} &nbsp;&nbsp;&nbsp;
                                       <FaTrash
+                                      size={15}
+                                      color={"red"}
                                         className="text-red-500 action-icon ml-2"
                                         onClick={() => handleDelete(row.id)}
                                       />

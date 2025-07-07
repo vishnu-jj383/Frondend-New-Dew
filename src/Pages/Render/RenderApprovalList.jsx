@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import { IoEye } from "react-icons/io5";
 import "../globalTable.css"; // Assuming you have this CSS file
 import debounce from "lodash/debounce";
+import AddRenderDesigner from "./RenderDesigner/AddRenderDesigner";
 
 function RenderApprovalList() {
   const [rows, setRows] = useState([]);
@@ -849,9 +850,18 @@ function RenderApprovalList() {
                             </tbody>
                           </table>
                         </div>
+                        {isModalOpen && (
+                                          <AddRenderDesigner
+                                            selectedRowId={selectedRowId}
+                                            onClose={() =>
+                                              setIsModalOpen(false)
+                                            }
+                                            onSuccess={fetchOrders}
+                                          />
+                                        )}
 
                         {/* Modal should be outside the table */}
-                        {isModalOpen && (
+                        {/* {isModalOpen && (
                           <div className="custom-modal-overlay">
                             <div className="custom-modal">
                               <div className="modal-header">
@@ -933,7 +943,7 @@ function RenderApprovalList() {
                               </form>
                             </div>
                           </div>
-                        )}
+                        )} */}
 
                         {/* Pagination - Only shown when not in search mode */}
                         {!isSearchActive && (

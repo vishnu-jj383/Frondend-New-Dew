@@ -15,9 +15,9 @@ import Swal from "sweetalert2";
 import { IoEye } from "react-icons/io5";
 import "../globalTable.css";
 import debounce from "lodash/debounce";
-import styled from 'styled-components';
+import styled from "styled-components";
+import AddCAD_Designer from "./CAD_Designer/AddCAD_Designer";
 function CadApprovalList() {
-  
   const API_URL = window.url + "cad/getAllCads";
   const getDesignername_Url = window.url + "auth/getUsersByRoleType";
   const SEARCH_API_URL = window.url + "cad/searchCads";
@@ -160,7 +160,7 @@ function CadApprovalList() {
     if (value === "Approved") {
       const result = await Swal.fire({
         title: "Are you sure?",
-        text: "Do You Want To Approve This Cad?",
+        text: "Do You Want To Approve This CAD?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Yes, Approve It!",
@@ -300,7 +300,7 @@ function CadApprovalList() {
         setTotalRecords(data.length);
         setIsSearchActive(true);
       } catch (err) {
-       console.log("error")
+        console.log("error");
       } finally {
         setLoading(false);
         setIsSearchPending(false);
@@ -415,7 +415,12 @@ function CadApprovalList() {
     return pageNumbers;
   };
 
+  // const handleAddDesignerClick = (rowId) => {
+  //   setSelectedRowId(rowId);
+  //   setIsModalOpen(true);
+  // };
   const handleAddDesignerClick = (rowId) => {
+    console.log("Clicked row ID:", rowId); // Debug log
     setSelectedRowId(rowId);
     setIsModalOpen(true);
   };
@@ -433,133 +438,51 @@ function CadApprovalList() {
     setImage(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const savedToken = Cookies.get("authToken");
-    if (!savedToken) {
-      Swal.fire({
-        icon: "warning",
-        title: "Authentication Token Missing",
-        text: "Please log in to continue.",
-      });
-      return;
-    }
-    if (!designerName || !startDate || !endDate) {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Fields",
-        text: "Please fill all required fields.",
-      });
-      return;
-    }
-     // Add date comparison
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            
-            if (end < start) {
-              Swal.fire({
-                icon: "warning",
-                title: "Invalid Date Range",
-                text: "End date must be equal to or greater than start date.",
-              });
-              return;
-            }
-    const dataToSend = {
-      id: selectedRowId,
-      empId: designerName,
-      startDate: new Date(startDate).toISOString().split("T")[0],
-      endDate: new Date(endDate).toISOString().split("T")[0],
-      type: "cad",
-    };
-    try {
-      const response = await axios.put(
-        window.url + "cad/addCadDesigner",
-        dataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      Swal.fire({
-        icon: "success",
-        title: "Cad Designer Created",
-        text: `Cad Designer Created`,
-      });
-      await fetchOrders();
-      setDesignerName("");
-      setStartDate("");
-      setEndDate("");
-      setIsModalOpen(false);
-      // navigate("/cad_approval_list");
-    } catch (error) {
-      console.error(
-        "Error creating Cad Designer:",
-        error.response ? error.response.data : error.message
-      );
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "Error: " +
-          (error.response
-            ? JSON.stringify(error.response.data)
-            : error.message),
-      });
-    }
-  };
-
-  const handleFormAndImageUpload = async (e) => {
-    await handleSubmit(e);
-  };
-
   const ViewDesignerButton = (orderId) => {
     navigate(`/cad_designer/${orderId}`);
   };
 
- const getButtonStyle = (row) => {
-  const isDisabled = row.cadStatus !== "cad" || row.status !== "Approved";
-  let backgroundColor, borderColor, color;
+  const getButtonStyle = (row) => {
+    const isDisabled = row.cadStatus !== "cad" || row.status !== "Approved";
+    let backgroundColor, borderColor, color;
 
-  if (isDisabled) {
-    if (row.status === "Pending") {
-      backgroundColor = "#f97316";
-      borderColor = "#ea580c";
-    } else if (row.status === "Rejected") {
-      backgroundColor = "#dc2626";
-      borderColor = "#b91c1c";
-    } else if (row.cadStatus !== "cad") {
-      backgroundColor = "#007bff";
-      borderColor = "#0056b3";
+    if (isDisabled) {
+      if (row.status === "Pending") {
+        backgroundColor = "#f97316";
+        borderColor = "#ea580c";
+      } else if (row.status === "Rejected") {
+        backgroundColor = "#dc2626";
+        borderColor = "#b91c1c";
+      } else if (row.cadStatus !== "cad") {
+        backgroundColor = "#007bff";
+        borderColor = "#0056b3";
+      } else {
+        backgroundColor = "#6c757d";
+        borderColor = "#5a6268";
+      }
     } else {
-      backgroundColor = "#6c757d";
-      borderColor = "#5a6268";
+      backgroundColor = "#28a745";
+      borderColor = "#218838";
     }
-  } else {
-    backgroundColor = "#28a745";
-    borderColor = "#218838";
-  }
 
-  color = "#ffffff";
+    color = "#ffffff";
 
-  return {
-    backgroundColor,
-    borderColor,
-    color,
-    padding: "0.25rem 0.5rem",
-    fontSize: "0.875rem",
-    borderRadius: "0.2rem",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    cursor: isDisabled ? "not-allowed" : "pointer",
-    opacity: isDisabled ? 0.65 : 1,
-    transition: "background-color 0.2s ease, opacity 0.2s ease",
+    return {
+      backgroundColor,
+      borderColor,
+      color,
+      padding: "0.25rem 0.5rem",
+      fontSize: "0.875rem",
+      borderRadius: "0.2rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      cursor: isDisabled ? "not-allowed" : "pointer",
+      opacity: isDisabled ? 0.65 : 1,
+      transition: "background-color 0.2s ease, opacity 0.2s ease",
+    };
   };
-};
   return (
     <main className="main-content">
-    
       <Content>
         <div className="">
           <div className="page-inner">
@@ -681,16 +604,19 @@ function CadApprovalList() {
                       <p style={{ color: "red" }}>{error}</p>
                     ) : (
                       <>
-                       
                         <div className="table-responsive">
                           <table className="display table table-striped table-hover customer-table">
                             <thead>
                               <tr>
                                 <th></th>
-                                {/* <th>ID</th> */}
+                                <th>ID</th>
                                 <th style={{ whiteSpace: "nowrap" }}>Cad NO</th>
-                                <th style={{ whiteSpace: "nowrap" }}>Concept ID</th>
-                                <th style={{ whiteSpace: "nowrap" }}>CAD Designer</th>
+                                <th style={{ whiteSpace: "nowrap" }}>
+                                  Concept ID
+                                </th>
+                                <th style={{ whiteSpace: "nowrap" }}>
+                                  CAD Designer
+                                </th>
                                 <th style={{ whiteSpace: "nowrap" }}>
                                   Request <br /> Cad Count
                                 </th>
@@ -701,31 +627,50 @@ function CadApprovalList() {
                                   Completed <br /> Date
                                 </th>
                                 <th>Status</th>
-                                <th style={{ whiteSpace: "nowrap" }}>Add Designer</th>
-                                <th style={{ whiteSpace: "nowrap" }}>View Designer</th>
+                                <th style={{ whiteSpace: "nowrap" }}>
+                                  Add Designer
+                                </th>
+                                <th style={{ whiteSpace: "nowrap" }}>
+                                  View Designer
+                                </th>
                                 <th>Approval</th>
-                                <th style={{ whiteSpace: "nowrap" }}>Move To Render</th>
+                                <th style={{ whiteSpace: "nowrap" }}>
+                                  Move To Render
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
                               {rows.length > 0 ? (
                                 rows.map((row) => (
-                                  <tr key={row.id}
-                                   title={`CAD No: ${row.cadNo}`} // Add tooltip with sketchNo
+                                  <tr
+                                    key={row.id}
+                                    title={`CAD No: ${row.cadNo}`} // Add tooltip with sketchNo
                                   >
                                     <td>
-                                      <IoEye  className="action-icon" onClick={() => handleViewcad(row.id)} />
+                                      <IoEye
+                                        className="action-icon"
+                                        onClick={() => handleViewcad(row.id)}
+                                      />
                                     </td>
-                                    {/* <td>{row.id}</td> */}
+                                    <td>{row.id}</td>
                                     <td>{row.cadNo}</td>
                                     <td>{row.orderNo}</td>
-                                    <td style={{ minWidth: "250px", whiteSpace: "pre-line" }}>
+                                    <td
+                                      style={{
+                                        minWidth: "250px",
+                                        whiteSpace: "pre-line",
+                                      }}
+                                    >
                                       {row.cadDesigners &&
                                       Array.isArray(row.cadDesigners) &&
                                       row.cadDesigners.length > 0 ? (
-                                        row.cadDesigners.map((cadDesigner, index) => (
-                                          <div key={index}>{cadDesigner.name}</div>
-                                        ))
+                                        row.cadDesigners.map(
+                                          (cadDesigner, index) => (
+                                            <div key={index}>
+                                              {cadDesigner.name}
+                                            </div>
+                                          )
+                                        )
                                       ) : (
                                         <div>No CAD Designer Available</div>
                                       )}
@@ -734,94 +679,48 @@ function CadApprovalList() {
                                     <td>{row.promiseDate}</td>
                                     <td>{row.cadCompletedDate}</td>
                                     <td>{row.status}</td>
-                                    <td style={{ minWidth: "200px", whiteSpace: "pre-line" }}>
+                                    <td
+                                      style={{
+                                        minWidth: "200px",
+                                        whiteSpace: "pre-line",
+                                      }}
+                                    >
                                       <div>
                                         <button
-                                          onClick={() => handleAddDesignerClick(row.id)}
+                                          onClick={() =>
+                                            handleAddDesignerClick(row.id)
+                                          }
                                           className="btn btn-sm"
-                                          style={{ backgroundColor: "#2E1A47", color: "white" }}
-                                          disabled={row.status === "Approved" || row.status === "Rejected"}
+                                          style={{
+                                            backgroundColor: "#2E1A47",
+                                            color: "white",
+                                          }}
+                                          disabled={
+                                            row.status === "Approved" ||
+                                            row.status === "Rejected"
+                                          }
                                         >
                                           Add Designer
-                                        </button> 
-                                        {isModalOpen && (
-                                          <div className="custom-modal-overlay">
-                                            <div className="custom-modal">
-                                              <div className="modal-header">
-                                                <h5>Add CAD Designer</h5>
-                                              </div>
-                                              <form onSubmit={handleFormAndImageUpload}>
-                                                <div className="modal-body">
-                                                  <div className="row">
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>Designer Name</label>
-                                                        <select
-                                                          className="form-select pd-select"
-                                                          value={designerName}
-                                                          onChange={(e) => setDesignerName(e.target.value)}
-                                                        >
-                                                          <option value="">Select</option>
-                                                          {designer_name_array.map((type) => (
-                                                            <option key={type.id} value={type.id}>
-                                                              {type.name}
-                                                            </option>
-                                                          ))}
-                                                        </select>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                  <div className="row">
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>Start Date</label>
-                                                        <input
-                                                          type="date"
-                                                          className="form-control"
-                                                          value={startDate}
-                                                          onChange={(e) => setStartDate(e.target.value)}
-                                                          required
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>End Date</label>
-                                                        <input
-                                                          type="date"
-                                                          className="form-control"
-                                                          value={endDate}
-                                                          onChange={(e) => setEndDate(e.target.value)}
-                                                          required
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div className="modal-footer">
-                                                  <button type="submit" className="btn btn-success">
-                                                    Submit
-                                                  </button>{" "} &nbsp;
-                                                  <button
-                                                    type="button"
-                                                    className="btn btn-danger"
-                                                    onClick={handleCloseModal}
-                                                  >
-                                                    Close
-                                                  </button>
-                                                </div>
-                                              </form>
-                                            </div>
-                                          </div>
-                                        )}
+                                        </button>
+                                       
                                       </div>
                                     </td>
-                                    <td style={{ minWidth: "200px", whiteSpace: "pre-line" }}>
+                                    <td
+                                      style={{
+                                        minWidth: "200px",
+                                        whiteSpace: "pre-line",
+                                      }}
+                                    >
                                       <div>
                                         <button
-                                          onClick={() => ViewDesignerButton(row.id)}
+                                          onClick={() =>
+                                            ViewDesignerButton(row.id)
+                                          }
                                           className="btn btn-sm"
-                                          style={{ backgroundColor: "#342D7E", color: "white" }}
+                                          style={{
+                                            backgroundColor: "#342D7E",
+                                            color: "white",
+                                          }}
                                         >
                                           Add Image
                                         </button>
@@ -830,25 +729,73 @@ function CadApprovalList() {
                                     <td>
                                       <select
                                         value={row.status}
-                                        onChange={(e) => handleApprovalChange(row.id, e.target.value)}
+                                        onChange={(e) =>
+                                          handleApprovalChange(
+                                            row.id,
+                                            e.target.value
+                                          )
+                                        }
                                         className="form-select"
                                         style={{ width: "150px" }}
-                                        disabled={row.status === "Approved" || row.status === "Rejected"}
+                                        disabled={
+                                          row.status === "Approved" ||
+                                          row.status === "Rejected"
+                                        }
                                       >
-                                        <option value="Pending" disabled>Pending</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Rejected">Rejected</option>
+                                        <option value="Pending" disabled>
+                                          Pending
+                                        </option>
+                                        <option value="Approved">
+                                          Approved
+                                        </option>
+                                        <option value="Rejected">
+                                          Rejected
+                                        </option>
                                       </select>
                                     </td>
-                                   
-                                    <td style={{ minWidth: "200px", whiteSpace: "pre-line" }}>
+
+                                    <td
+                                      style={{
+                                        minWidth: "200px",
+                                        whiteSpace: "pre-line",
+                                      }}
+                                    >
                                       <button
-                                        onClick={() => handleMoveToRender(row.id)}
-                                        disabled={row.cadStatus !== "cad" || row.status !== "Approved"}
-                                          style={getButtonStyle(row)}
-                                         className={`btn btn-sm ${row.cadStatus === "cad" && row.status === "Approved" ? "blink-animation" : ""}`}
+                                        onClick={() =>
+                                          handleMoveToRender(row.id)
+                                        }
+                                        className="btn btn-sm"
+                                        style={{
+                                          backgroundColor:
+                                            row.cadStatus !== "cad"
+                                              ? "#0056b3"
+                                              : "orange",
+                                          animation:
+                                            row.cadStatus === "cad" &&
+                                            row.status === "Approved"
+                                              ? "blink 1s infinite"
+                                              : "none",
+                                          color: "white",
+                                        }}
+                                        disabled={
+                                          row.cadStatus !== "cad" ||
+                                          row.status !== "Approved"
+                                        }
+                                        // disabled={
+                                        //   row.cadStatus !== "cad" ||
+                                        //   row.status !== "Approved"
+                                        // }
+                                        // style={getButtonStyle(row)}
+                                        // className={`btn btn-sm ${
+                                        //   row.cadStatus === "cad" &&
+                                        //   row.status === "Approved"
+                                        //     ? "blink-animation"
+                                        //     : ""
+                                        // }`}
                                       >
-                                        {row.cadStatus !== "cad" ? "Moved to Render" : "Move to Render"}
+                                        {row.cadStatus !== "cad"
+                                          ? "Moved to Render"
+                                          : "Move to Render"}
                                       </button>
                                     </td>
                                   </tr>
@@ -869,6 +816,15 @@ function CadApprovalList() {
                             </tbody>
                           </table>
                         </div>
+                         {isModalOpen && (
+                                          <AddCAD_Designer
+                                            selectedRowId={selectedRowId}
+                                            onClose={() =>
+                                              setIsModalOpen(false)
+                                            }
+                                            onSuccess={fetchOrders}
+                                          />
+                                        )}
                         {!isSearchActive && (
                           <div className="pagination-container mt-4">
                             <div className="pagination-info text-muted">
@@ -876,10 +832,16 @@ function CadApprovalList() {
                             </div>
                             <nav aria-label="Page navigation">
                               <ul className="pagination justify-content-end">
-                                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                <li
+                                  className={`page-item ${
+                                    currentPage === 1 ? "disabled" : ""
+                                  }`}
+                                >
                                   <button
                                     className="page-link"
-                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    onClick={() =>
+                                      handlePageChange(currentPage - 1)
+                                    }
                                     disabled={currentPage === 1}
                                   >
                                     <FaChevronLeft />
@@ -888,13 +850,21 @@ function CadApprovalList() {
                                 {renderPageNumbers()}
                                 <li
                                   className={`page-item ${
-                                    currentPage === totalPages || totalRecords === 0 ? "disabled" : ""
+                                    currentPage === totalPages ||
+                                    totalRecords === 0
+                                      ? "disabled"
+                                      : ""
                                   }`}
                                 >
                                   <button
                                     className="page-link"
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages || totalRecords === 0}
+                                    onClick={() =>
+                                      handlePageChange(currentPage + 1)
+                                    }
+                                    disabled={
+                                      currentPage === totalPages ||
+                                      totalRecords === 0
+                                    }
                                   >
                                     <FaChevronRight />
                                   </button>
@@ -905,14 +875,13 @@ function CadApprovalList() {
                         )}
                       </>
                     )}
-                   
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        </Content>
+      </Content>
       <Footer />
     </main>
   );

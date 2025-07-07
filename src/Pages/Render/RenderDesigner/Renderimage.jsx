@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
+// import { useSelector } from "react-redux";
 
-function CadImage() {
+function Renderimage() {
   const { designerId } = useParams();
-
+  // const sideBarState = useSelector(state => state?.sidebar?.sideBar)
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [taskId, setTaskId] = useState("");
+   const [renderId, setRenderId] = useState("");
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [imageUrls, setImageUrls] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+
   const [approvedForDew, setApprovedForDew] = useState(false);
   const [approvedForCustomer, setApprovedForCustomer] = useState(false);
   // const [specialInstruction, setSpecialInstruction] = useState("");
@@ -48,6 +51,7 @@ function CadImage() {
         setStartDate(customerData.startDate || "");
         setEndDate(customerData.endDate || "");
         setImageUrls(customerData.imageUrls || "");
+        setRenderId(customerData.renderId || "");
         // setApprovedForCustomer(customerData.isApprovedCustomer || "")
         // setApprovedForDew(customerData.isApprovedOwn || "")
       } catch (err) {
@@ -72,13 +76,6 @@ function CadImage() {
       setImagePreview(null);
     }
   };
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
 
   const handleImageUpload = async (e) => {
     e.preventDefault();
@@ -123,8 +120,8 @@ function CadImage() {
       });
 
       // Navigate to the desired page after successful image upload
-      navigate("/cad_approval_list");
-      //  navigate(`/render_designer_edit/${designerId}`);
+      // navigate("/renderApproval__list");
+        navigate(`/render_designer/${renderId}`);
     } catch (error) {
       // Close the info alert if there is an error
       Swal.close();
@@ -133,8 +130,6 @@ function CadImage() {
         "Error uploading image:",
         error.response ? error.response.data : error.message
       );
-
-      // Show error alert
       if (
         error.response &&
         error.response.data &&
@@ -194,8 +189,8 @@ function CadImage() {
       // });
 
       // Redirect after saving
-      navigate("/cad_approval_list");
-      //   navigate(`/render_designer_edit/${designerId}`);
+      // navigate("/renderApproval__list");
+         navigate(`/render_designer/${renderId}`);
     } catch (error) {
       console.error(
         "Error approving design:",
@@ -257,8 +252,8 @@ function CadImage() {
       // });
 
       // Redirect after saving
-      //   navigate(`/render_designer_edit/${designerId}`);
-      navigate("/cad_approval_list");
+         navigate(`/render_designer/${renderId}`);
+      // navigate("/renderApproval__list");
     } catch (error) {
       console.error(
         "Error approving design:",
@@ -279,45 +274,51 @@ function CadImage() {
   };
 
   const handleFormAndImageUpload = async (e) => {
-    // First, handle the form submission
-    await handleImageUpload(e);
+    try {
+      // Handle the form submission first
+      await handleImageUpload(e);
+    } catch (error) {
+      console.error("Error in image upload:", error);
+      alert("Image upload failed, but proceeding with form submission.");
+    }
 
-    // After form submission completes, handle the image upload
+    try {
+      // Proceed with customer approval
+      await CustomerApprove(e);
+    } catch (error) {
+      console.error("Error in Customer Approve:", error);
+      alert("Customer approval failed, but proceeding with the next step.");
+    }
 
-    await CustomerApprove(e);
-    await DewApprove(e);
+    try {
+      // Proceed with dew approval
+      await DewApprove(e);
+    } catch (error) {
+      console.error("Error in Dew Approve:", error);
+      alert("Dew approval failed.");
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   return (
     <main className="main-content">
-      <br /> <br />
       <Content>
         <div className="">
           <div className="page-inner">
-            <div className="page-header">
-              {/* <h3 className="fw-bold mb-3">CAD Edit</h3> */}
-              {/* <ul className="breadcrumbs mb-3">
-                <li className="separator">
-                  <i className="icon-arrow-right"></i>
-                </li>
-                <li className="nav-item">
-                  <a href={`/sketchList`}>Sketch List</a>
-                </li>
-                <li className="separator">
-                  <i className="icon-arrow-right"></i>
-                </li>
-                <li className="nav-item">
-                  
-                  <a href={`/renderApproval__list`}>Render Approval List</a>
-                </li>
-              </ul> */}
-            </div>
+            <div className="page-header"></div>
 
             {/* Order Form */}
             <div className="card">
               <div className="card-header  text-white">
                 <center>
-                  <h5 style={{ color: "black" }}>Designer Image Upload</h5>
+                  <h5 style={{ color: "black" }}>Render Designer Image Upload</h5>
                 </center>
               </div>
               <div className="card-body">
@@ -354,7 +355,7 @@ function CadImage() {
                     </div>
                   </div>
                 </div>
-<br/>
+                <br />
                 <div className="form-group">
                   <input
                     type="file"
@@ -362,7 +363,6 @@ function CadImage() {
                     onChange={handleFileChange} // Handle the file change event
                   />
                 </div>
-
                 {imagePreview && (
                   <div className="form-group">
                     <label>Image Preview:</label>
@@ -429,4 +429,4 @@ function CadImage() {
   );
 }
 
-export default CadImage;
+export default Renderimage;

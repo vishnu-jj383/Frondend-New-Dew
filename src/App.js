@@ -33,9 +33,9 @@ import EditSkitch from "./Pages/Sketches/EditSkitch";
 import Add_Designer from "./Pages/Sketches/NewSketch/Add_Designer";
 import ViewModel from "./Pages/Sketches/NewSketch/ViewModel";
 import ViewSketchs from "./Pages/Sketches/ViewSketchs";
-import GetSketchDesigner from "./Pages/Sketches/GetSketchDesigner";
-import EditSketchDesigner from "./Pages/Sketches/EditSketchDesigner";
-import Imageupload from "./Pages/Sketches/Imageupload";
+import GetSketchDesigner from "./Pages/Sketches/SketchDesigner/GetSketchDesigner";
+import EditSketchDesigner from "./Pages/Sketches/SketchDesigner/EditSketchDesigner";
+import Imageupload from "./Pages/Sketches/SketchDesigner/Imageupload";
 import SketchGridView from "./Pages/Sketches/SketchGridView";
 
 import CadList from "./Pages/CAD/CadList";
@@ -43,9 +43,9 @@ import CadApprovalList from "./Pages/CAD/CadApprovalList";
 import CadGridview from "./Pages/CAD/CadGridview";
 import EditCad from "./Pages/CAD/EditCad";
 import CadMetal from "./Pages/CAD/CadMetal";
-import GetDesignerList from "./Pages/CAD/GetDesignerList";
-import EditDesigner from "./Pages/CAD/EditDesigner";
-import CadImage from "./Pages/CAD/CadImage";
+import GetDesignerList from "./Pages/CAD/CAD_Designer/GetDesignerList";
+import EditDesigner from "./Pages/CAD/CAD_Designer/EditDesigner";
+import CadImage from "./Pages/CAD/CAD_Designer/CadImage";
 import ViewCad from "./Pages/CAD/ViewCad";
 import Add_CAD from "./Pages/CAD/NewCAD/Add_CAD";
 import Add_CAD_Designer from "./Pages/CAD/NewCAD/Add_CAD_Designer";
@@ -58,6 +58,8 @@ import DelivaryReport from "./Pages/Reports/DelivaryReport/DelivaryReport";
 import FeedbackList from "./Pages/Reports/Feedback/FeedbackList";
 import InsiteReport from "./Pages/Reports/InsiteReport/InsiteReport";
 import ProgressReport from "./Pages/Reports/WorkingProgresReport/ProgressReport";
+import CadReport from "./Pages/Reports/CADReport/CadReport";
+import CategoryReport from "./Pages/Reports/CategroywiseReport/CategoryReport";
 
 import CreateCustomer from "./Pages/Customers/CreateCustomer";
 import ListCustomer from "./Pages/Customers/ListCustomer";
@@ -67,10 +69,10 @@ import ViewCustomerDetails from "./Pages/Customers/ViewCustomerDetails";
 import RenderList from "./Pages/Render/RenderList";
 import RenderApprovalList from "./Pages/Render/RenderApprovalList";
 import EditRender from "./Pages/Render/EditRender";
-import RenderDesignerList from "./Pages/Render/RenderDesignerList";
-import RenderDesignEdit from "./Pages/Render/RenderDesignEdit";
+import RenderDesignerList from "./Pages/Render/RenderDesigner/RenderDesignerList";
+import RenderDesignEdit from "./Pages/Render/RenderDesigner/RenderDesignEdit";
 import RenderGridview from "./Pages/Render/RenderGridview";
-import Renderimage from "./Pages/Render/Renderimage";
+import Renderimage from "./Pages/Render/RenderDesigner/Renderimage";
 import ViewRender from "./Pages/Render/ViewRender";
 
 import DesignBank from "./Pages/Design/DesignBank/DesignBank";
@@ -129,11 +131,19 @@ function App() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
- 
+
   const router = createBrowserRouter([
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/album/:customer_id",
+      element: <Album />,
+    },
+    {
+      path: "/album_by_id/:customer_id",
+      element: <Album_By_id />,
     },
     {
       path: "",
@@ -161,258 +171,255 @@ function App() {
         // },
         {
           path: "/pdLists",
-          element:  <PdLists /> ,
+          element: <PdLists />,
         },
         {
           path: "/pdedit/:id",
-          element:  <EditPd /> ,
+          element: <EditPd />,
         },
         {
           path: "/vieworder/:id",
-          element:  <Vieworder /> ,
+          element: <Vieworder />,
         },
 
         {
           path: "/sketchlist",
-          element:  <SketchList /> ,
+          element: <SketchList />,
         },
         {
           path: "/sketch_approvalLists",
-          element:  <SketchApprovalList /> ,
+          element: <SketchApprovalList />,
         },
         {
           path: "/edit/:id",
-          element:  <EditSkitch />  ,
+          element: <EditSkitch />,
         },
         {
           path: "/add_sketch",
-          element:  <Add_Sketch /> ,
+          element: <Add_Sketch />,
         },
         {
           path: "/add_sketchdesigner",
-          element:  <Add_Designer /> ,
+          element: <Add_Designer />,
         },
         {
           path: "/view_sketch_model",
-          element:  <ViewModel /> ,
+          element: <ViewModel />,
         },
 
         {
           path: "/sketch_designer/:orderId",
-          element:  <GetSketchDesigner /> ,
+          element: <GetSketchDesigner />,
         },
         {
-          path: "/sketch_designer_edit/:designerId",
-          element:  <EditSketchDesigner /> ,
+          path: "/sketch_designer_edit/:designerId/:orderId",
+          element: <EditSketchDesigner />,
         },
         {
-          path: "/sketch_image_upload/:designerId",
-          element:  <Imageupload /> ,
+          path: "/sketch_image_upload/:designerId/:orderId",
+          element: <Imageupload />,
         },
         {
           path: "/viewsketch/:id",
-          element: <ViewSketchs /> ,
+          element: <ViewSketchs />,
         },
         {
-      path: "/sketchGridView",
-      element:  <SketchGridView /> ,
-    },
-
+          path: "/sketchGridView",
+          element: <SketchGridView />,
+        },
 
         {
-      path: "/cadlist",
-      element:<CadList /> ,
-    },
-    {
-      path: "/cad_approval_list",
-      element:  <CadApprovalList /> ,
-    },
-    {
-      path: "/cad_edit/:customerId",
-      element:  <EditCad /> ,
-    },
-    {
-      path: "/cad_metal/:customerId",
-      element:  <CadMetal /> ,
-    },
-    {
-      path: "/cad_designer/:orderId",
-      element:  <GetDesignerList /> ,
-    },
-    {
-      path: "/cad_gridview",
-      element:  <CadGridview /> ,
-    },
-    {
-      path: "/cad_image_upload/:designerId",
-      element: isTokenValid ? <CadImage /> : <Login />,
-    },
-    {
-      path: "/designer_edit/:designerId",
-      element: <EditDesigner /> ,
-    },
-    {
-      path: "/viewcad/:id",
-      element:  <ViewCad /> ,
-    },
-    {
-      path: "/add_cad",
-      element:  <Add_CAD /> ,
-    },
-    {
-      path: "/add_caddesigner",
-      element:  <Add_CAD_Designer /> ,
-    },
-    {
-      path: "/view_cad_Model",
-      element:  <ViewCADModel /> ,
-    },
-     {
-      path: "/get_metal/:customerId",
-      element:  <GetMetal /> ,
-    },
+          path: "/cadlist",
+          element: <CadList />,
+        },
+        {
+          path: "/cad_approval_list",
+          element: <CadApprovalList />,
+        },
+        {
+          path: "/cad_edit/:customerId",
+          element: <EditCad />,
+        },
+        {
+          path: "/cad_metal/:customerId",
+          element: <CadMetal />,
+        },
+        {
+          path: "/cad_designer/:orderId",
+          element: <GetDesignerList />,
+        },
+        {
+          path: "/cad_gridview",
+          element: <CadGridview />,
+        },
+        {
+          path: "/cad_image_upload/:designerId",
+          element: isTokenValid ? <CadImage /> : <Login />,
+        },
+        {
+          path: "/designer_edit/:designerId",
+          element: <EditDesigner />,
+        },
+        {
+          path: "/viewcad/:id",
+          element: <ViewCad />,
+        },
+        {
+          path: "/add_cad",
+          element: <Add_CAD />,
+        },
+        {
+          path: "/add_caddesigner",
+          element: <Add_CAD_Designer />,
+        },
+        {
+          path: "/view_cad_Model",
+          element: <ViewCADModel />,
+        },
+        {
+          path: "/get_metal/:customerId",
+          element: <GetMetal />,
+        },
 
+        {
+          path: "/render_list",
+          element: <RenderList />,
+        },
+        {
+          path: "/renderApproval__list",
+          element: <RenderApprovalList />,
+        },
+        {
+          path: "/render_edit/:renderId",
+          element: <EditRender />,
+        },
+        {
+          path: "/render_designer/:orderId",
+          element: <RenderDesignerList />,
+        },
 
-    {
-      path: "/render_list",
-      element:<RenderList />  ,
-    },
-    {
-      path: "/renderApproval__list",
-      element: <RenderApprovalList /> ,
-    },
-    {
-      path: "/render_edit/:renderId",
-      element:  <EditRender /> ,
-    },
-    {
-      path: "/render_designer/:orderId",
-      element:  <RenderDesignerList /> ,
-    },
+        {
+          path: "/render_designer_edit/:designerId",
+          element: <RenderDesignEdit />,
+        },
+        {
+          path: "/render_gridview",
+          element: <RenderGridview />,
+        },
+        {
+          path: "/render_image_upload/:designerId",
+          element: <Renderimage />,
+        },
+        {
+          path: "/viewrender/:id",
+          element: <ViewRender />,
+        },
 
+        {
+          path: "/designBank",
+          element: <DesignBank />,
+        },
+        {
+          path: "/designMaster",
+          element: <DesignMaster />,
+        },
+        {
+          path: "/list_album",
+          element: <ListAlbum />,
+        },
+        {
+          path: "/view_customer_album/:customer_id",
+          element: <ViewCustomerAlbum />,
+        },
+        // {
+        //   path: "/album/:customer_id",
+        //   element: isTokenValid ? <Album /> : <Login />,
+        // },
+        // {
+        //   path: "/album/:customer_id",
+        //   element: <Album />,
+        // },
+        // {
+        //   path: "/album_by_id/:customer_id",
+        //   element: <Album_By_id />,
+        // },
+        // {
+        //   path: "/feedback/:customer_id",
+        //   element: isTokenValid ? <Feedback /> : <Login />,
+        // },
+        {
+          path: "/feedback/:customer_id",
+          element: <Feedback />,
+        },
 
-    {
-      path: "/render_designer_edit/:designerId",
-      element:  <RenderDesignEdit /> ,
-    },
-    {
-      path: "/render_gridview",
-      element:  <RenderGridview /> ,
-    },
-    {
-      path: "/render_image_upload/:designerId",
-      element:  <Renderimage /> ,
-    },
-    {
-      path: "/viewrender/:id",
-      element:  <ViewRender /> ,
-    },
+        {
+          path: "/dewAlbum",
+          element: <DewAlbums />,
+        },
 
+        {
+          path: "/designReports",
+          element: <DesignReports />,
+        },
+        {
+          path: "/designerReports",
+          element: isTokenValid ? <DesignerReports /> : <Login />,
+        },
+        {
+          path: "/feedbacklist",
+          element: isTokenValid ? <FeedbackList /> : <Login />,
+        },
+        {
+          path: "/delivery_report",
+          element: isTokenValid ? <DelivaryReport /> : <Login />,
+        },
+        {
+          path: "/working_progress_report",
+          element: isTokenValid ? <ProgressReport /> : <Login />,
+        },
+        {
+          path: "/insightReports",
+          element: isTokenValid ? <InsiteReport /> : <Login />,
+        },
+        {
+          path: "/cadReports",
+          element: isTokenValid ? <CadReport /> : <Login />,
+        },
+        {
+          path: "/categoryReports",
+          element: isTokenValid ? <CategoryReport /> : <Login />,
+        },
 
+        {
+          path: "/customer__list",
+          element: isTokenValid ? <ListCustomer /> : <Login />,
+        },
+        {
+          path: "/edit-customer/:customerId",
+          element: isTokenValid ? <EditCustomer /> : <Login />,
+        },
+        {
+          path: "/create_customer",
+          element: isTokenValid ? <CreateCustomer /> : <Login />,
+        },
+        {
+          path: "/customerDetails/:customerId",
+          element: isTokenValid ? <ViewCustomerDetails /> : <Login />,
+        },
 
-    {
-      path: "/designBank",
-      element:  <DesignBank /> ,
-    },
-    {
-      path: "/designMaster",
-      element:  <DesignMaster /> ,
-    },
-    {
-      path: "/list_album",
-      element:  <ListAlbum /> ,
-    },
-    {
-      path: "/view_customer_album/:customer_id",
-      element: <ViewCustomerAlbum /> ,
-    },
-    // {
-    //   path: "/album/:customer_id",
-    //   element: isTokenValid ? <Album /> : <Login />,
-    // },
-    {
-      path: "/album/:customer_id",
-      element: <Album /> ,
-    },
-    {
-      path: "/album_by_id/:customer_id",
-      element: <Album_By_id /> ,
-    },
-    // {
-    //   path: "/feedback/:customer_id",
-    //   element: isTokenValid ? <Feedback /> : <Login />,
-    // },
-    {
-      path: "/feedback/:customer_id",
-      element:  <Feedback /> ,
-    },
-
-     {
-      path: "/dewAlbum",
-      element:  <DewAlbums /> ,
-    },
-
-    {
-      path: "/designReports",
-      element: <DesignReports /> ,
-    },
-    {
-      path: "/designerReports",
-      element: isTokenValid ? <DesignerReports /> : <Login />,
-    },
-    {
-    path: "/feedbacklist",
-    element: isTokenValid ? <FeedbackList /> : <Login />,
-  },
-  {
-    path: "/delivery_report",
-    element: isTokenValid ? <DelivaryReport /> : <Login />,
-  },
-  {
-    path: "/working_progress_report",
-    element: isTokenValid ? <ProgressReport /> : <Login />,
-  },
-  {
-    path: "/insightReports",
-    element: isTokenValid ? <InsiteReport /> : <Login />,
-  },
-
-   {
-      path: "/customer__list",
-      element: isTokenValid ? <ListCustomer /> : <Login />,
-    },
-    {
-      path: "/edit-customer/:customerId",
-      element: isTokenValid ? <EditCustomer /> : <Login />,
-    },
-    {
-      path: "/create_customer",
-      element: isTokenValid ? <CreateCustomer /> : <Login />,
-    },
-    {
-      path: "/customerDetails/:customerId",
-      element: isTokenValid ? <ViewCustomerDetails /> : <Login />,
-    },
-
-     { path: "/list_employe", element: <EmployeeList /> },
-    { path: "/add_employee", element: <AddEmployee /> },
-    {
-      path: "/employee_edit/:id",
-      element: isTokenValid ? <EditEmploye /> : <Login />,
-    },
-    {
-      path: "/view_employee/:empId",
-      element: isTokenValid ? <ViewEmployee /> : <Login />,
-    },
-
-
-    
-
-   
+        { path: "/list_employe", element: <EmployeeList /> },
+        { path: "/add_employee", element: <AddEmployee /> },
+        {
+          path: "/employee_edit/:id",
+          element: isTokenValid ? <EditEmploye /> : <Login />,
+        },
+        {
+          path: "/view_employee/:empId",
+          element: isTokenValid ? <ViewEmployee /> : <Login />,
+        },
 
         // { path: '/', element: <DashBoard /> },
         { path: "/about", element: <About /> },
-       
       ],
     },
   ]);

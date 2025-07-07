@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
-
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-
-function Imageupload() {
+import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
+function CadImage() {
   const { designerId } = useParams();
 
   const navigate = useNavigate();
@@ -23,6 +22,7 @@ function Imageupload() {
   const [approvedForDew, setApprovedForDew] = useState(false);
   const [approvedForCustomer, setApprovedForCustomer] = useState(false);
   // const [specialInstruction, setSpecialInstruction] = useState("");
+  const [cadId, setCadid] = useState("");
 
   const API_URL = window.url + `tasks/getTaskById/${designerId}`;
 
@@ -49,6 +49,7 @@ function Imageupload() {
         setStartDate(customerData.startDate || "");
         setEndDate(customerData.endDate || "");
         setImageUrls(customerData.imageUrls || "");
+        setCadid(customerData.cadId || "");
         // setApprovedForCustomer(customerData.isApprovedCustomer || "")
         // setApprovedForDew(customerData.isApprovedOwn || "")
       } catch (err) {
@@ -120,11 +121,12 @@ function Imageupload() {
       Swal.fire({
         icon: "success",
         title: "Image Saved",
-        text: "Sketch Image Has Been Saved Successfully.",
+        text: "Render Image Has Been Saved Successfully.",
       });
 
       // Navigate to the desired page after successful image upload
-      navigate("/sketchApproval");
+      // navigate("/cad_approval_list");
+       navigate(`/cad_designer/${cadId}`);
       //  navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
       // Close the info alert if there is an error
@@ -136,15 +138,20 @@ function Imageupload() {
       );
 
       // Show error alert
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "Error: " +
-          (error.response
-            ? JSON.stringify(error.response.data)
-            : error.message),
-      });
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message ===
+          "File not supported! (supports jpeg,jpg,jfif,png)"
+      ) {
+        // Show error alert
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "File not supported! (supports jpeg,jpg,jfif,png) ",
+          // (error.response ? JSON.stringify(error.response.data) : error.message),
+        });
+      }
     }
   };
   const CustomerApprove = async (e) => {
@@ -190,7 +197,9 @@ function Imageupload() {
       // });
 
       // Redirect after saving
-      navigate("/sketchApproval");
+      // navigate("/cad_approval_list");
+      navigate(`/cad_designer/${cadId}`);
+    
       //   navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
       console.error(
@@ -254,7 +263,8 @@ function Imageupload() {
 
       // Redirect after saving
       //   navigate(`/render_designer_edit/${designerId}`);
-      navigate("/sketchApproval");
+      // navigate("/cad_approval_list");
+       navigate(`/cad_designer/${cadId}`);
     } catch (error) {
       console.error(
         "Error approving design:",
@@ -284,14 +294,21 @@ function Imageupload() {
     await DewApprove(e);
   };
 
+  const handleBack = (customerId) => {
+    navigate(`/cad_designer/${customerId}`);
+  };
+
+
   return (
     <main className="main-content">
+      <br /> <br />
+
       <Content>
         <div className="">
           <div className="page-inner">
             <div className="page-header">
               {/* <h3 className="fw-bold mb-3">CAD Edit</h3> */}
-              <ul className="breadcrumbs mb-3">
+              {/* <ul className="breadcrumbs mb-3">
                 <li className="separator">
                   <i className="icon-arrow-right"></i>
                 </li>
@@ -302,13 +319,17 @@ function Imageupload() {
                   <i className="icon-arrow-right"></i>
                 </li>
                 <li className="nav-item">
-                  {/* <a href="/cad_metal">Metal & Material</a> */}
-                  <a href={`/sketchApproval`}>Sketch Approval List</a>
+                  
+                  <a href={`/renderApproval__list`}>Render Approval List</a>
                 </li>
-              </ul>
+              </ul> */}
             </div>
 
             {/* Order Form */}
+             <button className="btn  mb-3" onClick={() => handleBack(cadId)}>
+                        <FaArrowLeft className="me-2" size={25} />{" "}
+                        {/* Icon with margin-end */}
+                      </button>
             <div className="card">
               <div className="card-header  text-white">
                 <center>
@@ -320,7 +341,7 @@ function Imageupload() {
                   {/* Customer Selection */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="customerSelect">Task Id</label>
+                      <label htmlFor="customerSelect">TaskId</label>
                       <input
                         disabled
                         type="text"
@@ -349,7 +370,7 @@ function Imageupload() {
                     </div>
                   </div>
                 </div>
-                <br />
+<br/>
                 <div className="form-group">
                   <input
                     type="file"
@@ -357,6 +378,7 @@ function Imageupload() {
                     onChange={handleFileChange} // Handle the file change event
                   />
                 </div>
+
                 {imagePreview && (
                   <div className="form-group">
                     <label>Image Preview:</label>
@@ -375,6 +397,7 @@ function Imageupload() {
                     </div>
                   </div>
                 )}
+
                 {/* Action Buttons */}
                 <br></br>
                 <div className="row">
@@ -422,4 +445,4 @@ function Imageupload() {
   );
 }
 
-export default Imageupload;
+export default CadImage;

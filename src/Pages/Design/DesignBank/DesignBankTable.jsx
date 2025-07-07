@@ -368,7 +368,7 @@ const DesignBankTable = () => {
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Design Sent To Customer Successfully!",
+        text: "Album Created Successfully!",
       });
       navigate(`/album/${selectedCustomer}`, { state: { customer_id: selectedCustomer } });
     } catch (error) {

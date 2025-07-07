@@ -89,7 +89,7 @@ function Add_Designer() {
           "Content-Type": "application/json",
         },
       });
-      Swal.fire("Success", "Sketch added successfully!", "success");
+      Swal.fire("Success", "Sketch Added Successfully!", "success");
       setShowModal(false);
       navigate("/view_sketch_Model");
     } catch (err) {

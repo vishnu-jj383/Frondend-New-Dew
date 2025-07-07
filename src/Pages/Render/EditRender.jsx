@@ -6,6 +6,14 @@ import { useNavigate, useParams } from "react-router";
 import Cookies from 'js-cookie';
 // import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+const formatDateToLocal = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 function EditRender() {
     const { renderId } = useParams();
     const navigate = useNavigate();
@@ -40,14 +48,17 @@ function EditRender() {
                 setId(renderData.id || "");
                 setOrderId(renderData.orderId || "");
                 // Ensure dates are in YYYY-MM-DD format
-                const briefDate = renderData.renderBriefDate 
-                    ? new Date(renderData.renderBriefDate).toISOString().split('T')[0] 
-                    : "";
-                const completedDate = renderData.renderCompletedDate 
-                    ? new Date(renderData.renderCompletedDate).toISOString().split('T')[0] 
-                    : "";
-                setRenderBriefDate(briefDate);
-                setRenderCompletedDate(completedDate);
+                // const briefDate = renderData.renderBriefDate 
+                //     ? new Date(renderData.renderBriefDate).toISOString().split('T')[0] 
+                //     : "";
+                // const completedDate = renderData.renderCompletedDate 
+                //     ? new Date(renderData.renderCompletedDate).toISOString().split('T')[0] 
+                //     : "";
+                // setRenderBriefDate(briefDate);
+                // setRenderCompletedDate(completedDate);
+
+                setRenderBriefDate(formatDateToLocal(renderData.renderBriefDate));
+        setRenderCompletedDate(formatDateToLocal(renderData.renderCompletedDate)); 
                 setReqRenderCount(renderData.reqRenderCount || "");
                 setSpecialInstructions(renderData.specialInstructions || "");
             } catch (err) {
@@ -84,16 +95,55 @@ function EditRender() {
             });
             return;
         }
-    
+
+        // Date validation
+            const hasStartDate = renderBriefDate && renderBriefDate.trim() !== "";
+            const hasEndDate = renderCompletedDate && renderCompletedDate.trim() !== "";
+        
+            if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+              Swal.fire({
+                icon: "warning",
+                title: "Dates Required",
+                text: "Both Start Date and Completed Date are required if one is provided.",
+              });
+              return;
+            }
+        
+            if (
+              hasStartDate &&
+              hasEndDate &&
+              new Date(renderCompletedDate) < new Date(renderBriefDate)
+            ) {
+              Swal.fire({
+                icon: "error",
+                title: "Invalid Dates",
+                text: "Completed Date cannot be before Start Date. Please correct the dates.",
+              });
+              return;
+            }
+        
+     const payload = {
+     
+      reqRenderCount: parseInt(reqRenderCount),
+    specialInstructions: specialInstructions,
+    };
+
+    if (hasStartDate) {
+      payload.renderBriefDate = renderBriefDate; // Send YYYY-MM-DD as is
+    }
+    if (hasEndDate) {
+      payload.renderCompletedDate = renderCompletedDate; // Send YYYY-MM-DD as is
+    }
         try {
             const response = await axios.put(
                 window.url + `render/updateRender/${renderId}`,
-                {
-                    renderBriefDate: renderBriefDate,
-                    renderCompletedDate: renderCompletedDate,
-                    reqRenderCount: parseInt(reqRenderCount),
-                    specialInstructions: specialInstructions,
-                },
+                payload,
+                // {
+                //     renderBriefDate: renderBriefDate,
+                //     renderCompletedDate: renderCompletedDate,
+                //     reqRenderCount: parseInt(reqRenderCount),
+                //     specialInstructions: specialInstructions,
+                // },
                 {
                     headers: {
                         Authorization: `Bearer ${savedToken}`,

@@ -328,7 +328,7 @@ function RenderList() {
                             <thead>
                               <tr>
                                 <th></th>
-                                {/* <th>ID</th> */}
+                                <th>ID</th>
                                 <th>Render No</th>
                                 <th>Concept ID</th>
                                 <th>
@@ -355,7 +355,7 @@ function RenderList() {
                                         onClick={() => handleViewrender(row.id)}
                                       />
                                     </td>
-                                    {/* <td>{row.id}</td> */}
+                                    <td>{row.id}</td>
                                     <td>{row.renderNo}</td>
                                     <td>{row.orderNo}</td>
                                     <td>{row.reqRenderCount || "N/A"}</td>

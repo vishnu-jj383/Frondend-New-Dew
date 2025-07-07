@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
+import { FaArrowLeft } from "react-icons/fa";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-// import { useSelector } from "react-redux";
 
-function Renderimage() {
+function Imageupload() {
   const { designerId } = useParams();
-  // const sideBarState = useSelector(state => state?.sidebar?.sideBar)
+ const { orderId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,9 +20,10 @@ function Renderimage() {
   const [endDate, setEndDate] = useState("");
   const [imageUrls, setImageUrls] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-
   const [approvedForDew, setApprovedForDew] = useState(false);
   const [approvedForCustomer, setApprovedForCustomer] = useState(false);
+
+   const [sketchId, setSketchid] = useState("");
   // const [specialInstruction, setSpecialInstruction] = useState("");
 
   const API_URL = window.url + `tasks/getTaskById/${designerId}`;
@@ -50,6 +51,8 @@ function Renderimage() {
         setStartDate(customerData.startDate || "");
         setEndDate(customerData.endDate || "");
         setImageUrls(customerData.imageUrls || "");
+
+        setSketchid(customerData.sketchId || "");
         // setApprovedForCustomer(customerData.isApprovedCustomer || "")
         // setApprovedForDew(customerData.isApprovedOwn || "")
       } catch (err) {
@@ -74,6 +77,13 @@ function Renderimage() {
       setImagePreview(null);
     }
   };
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleImageUpload = async (e) => {
     e.preventDefault();
@@ -114,11 +124,12 @@ function Renderimage() {
       Swal.fire({
         icon: "success",
         title: "Image Saved",
-        text: "Render Image Has Been Saved Successfully.",
-      });
+        text: "Sketch Image Has Been Saved Successfully.",
+      }); 
 
       // Navigate to the desired page after successful image upload
-      navigate("/renderApproval__list");
+      // navigate("/sketch_approvalLists");
+       navigate(`/sketch_designer/${orderId}`);
       //  navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
       // Close the info alert if there is an error
@@ -128,20 +139,17 @@ function Renderimage() {
         "Error uploading image:",
         error.response ? error.response.data : error.message
       );
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message ===
-          "File not supported! (supports jpeg,jpg,jfif,png)"
-      ) {
-        // Show error alert
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "File not supported! (supports jpeg,jpg,jfif,png) ",
-          // (error.response ? JSON.stringify(error.response.data) : error.message),
-        });
-      }
+
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          "Error: " +
+          (error.response
+            ? JSON.stringify(error.response.data)
+            : error.message),
+      });
     }
   };
   const CustomerApprove = async (e) => {
@@ -187,7 +195,8 @@ function Renderimage() {
       // });
 
       // Redirect after saving
-      navigate("/renderApproval__list");
+      // navigate("/sketch_approvalLists");
+       navigate(`/sketch_designer/${orderId}`);
       //   navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
       console.error(
@@ -251,7 +260,7 @@ function Renderimage() {
 
       // Redirect after saving
       //   navigate(`/render_designer_edit/${designerId}`);
-      navigate("/renderApproval__list");
+      navigate(`/sketch_designer/${orderId}`);
     } catch (error) {
       console.error(
         "Error approving design:",
@@ -272,61 +281,27 @@ function Renderimage() {
   };
 
   const handleFormAndImageUpload = async (e) => {
-    try {
-      // Handle the form submission first
-      await handleImageUpload(e);
-    } catch (error) {
-      console.error("Error in image upload:", error);
-      alert("Image upload failed, but proceeding with form submission.");
-    }
+    // First, handle the form submission
+    await handleImageUpload(e);
 
-    try {
-      // Proceed with customer approval
-      await CustomerApprove(e);
-    } catch (error) {
-      console.error("Error in Customer Approve:", error);
-      alert("Customer approval failed, but proceeding with the next step.");
-    }
+    // After form submission completes, handle the image upload
 
-    try {
-      // Proceed with dew approval
-      await DewApprove(e);
-    } catch (error) {
-      console.error("Error in Dew Approve:", error);
-      alert("Dew approval failed.");
-    }
+    await CustomerApprove(e);
+    await DewApprove(e);
   };
-
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
-
+const handleBack = () => {
+    navigate(`/sketch_designer/${orderId}`);
+  };
   return (
     <main className="main-content">
       <Content>
         <div className="">
+          <button className="btn mb-3" onClick={handleBack}>
+                      <FaArrowLeft className="me-2" size={25} />
+                    </button>
           <div className="page-inner">
             <div className="page-header">
-              {/* <h3 className="fw-bold mb-3">CAD Edit</h3> */}
-              <ul className="breadcrumbs mb-3">
-                <li className="separator">
-                  <i className="icon-arrow-right"></i>
-                </li>
-                <li className="nav-item">
-                  <a href={`/sketchList`}>Sketch List</a>
-                </li>
-                <li className="separator">
-                  <i className="icon-arrow-right"></i>
-                </li>
-                <li className="nav-item">
-                  {/* <a href="/cad_metal">Metal & Material</a> */}
-                  <a href={`/renderApproval__list`}>Render Approval List</a>
-                </li>
-              </ul>
+              
             </div>
 
             {/* Order Form */}
@@ -341,7 +316,7 @@ function Renderimage() {
                   {/* Customer Selection */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="customerSelect">TaskId</label>
+                      <label htmlFor="customerSelect">Task Id</label>
                       <input
                         disabled
                         type="text"
@@ -370,7 +345,7 @@ function Renderimage() {
                     </div>
                   </div>
                 </div>
-
+                <br />
                 <div className="form-group">
                   <input
                     type="file"
@@ -396,7 +371,6 @@ function Renderimage() {
                     </div>
                   </div>
                 )}
-
                 {/* Action Buttons */}
                 <br></br>
                 <div className="row">
@@ -433,6 +407,7 @@ function Renderimage() {
                   </button>{" "}
                   &nbsp;&nbsp;&nbsp;
                 </center>
+                <br/>
               </div>
             </div>
           </div>
@@ -443,4 +418,4 @@ function Renderimage() {
   );
 }
 
-export default Renderimage;
+export default Imageupload;

@@ -9,8 +9,8 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { FaUpload } from "react-icons/fa";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 
 import Cookies from "js-cookie";
 import { Modal, Image } from "antd";
@@ -89,11 +89,11 @@ function GetSketchDesigner() {
 
   const handleEdit = (designerId) => {
     // Implement your edit logic here
-    navigate(`/sketch_designer_edit/${designerId}`);
+    navigate(`/sketch_designer_edit/${designerId}/${orderId}`);
   };
   const handleUploadimage = (designerId) => {
     // Implement your edit logic here
-    navigate(`/sketch_image_upload/${designerId}`);
+    navigate(`/sketch_image_upload/${designerId}/${orderId}`);
   };
 
   const handlePageChange = (page) => {
@@ -130,17 +130,17 @@ function GetSketchDesigner() {
                             <thead>
                               <tr>
                                 {/* <th>ID</th> */}
-                                <th>task No</th>
+                                <th>Task No</th>
                                 <th style={{ whiteSpace: "nowrap" }}>
-                                  order Id
+                                  Order Id
                                 </th>
-                                <th style={{ whiteSpace: "nowrap" }}>name</th>
+                                <th style={{ whiteSpace: "nowrap" }}>Name</th>
 
                                 <th style={{ whiteSpace: "nowrap" }}>
-                                  start Date
+                                  Start Date
                                 </th>
                                 <th style={{ whiteSpace: "nowrap" }}>
-                                  end Date
+                                  End Date
                                 </th>
                                 <th style={{ whiteSpace: "nowrap" }}>Image</th>
                                 <th>
@@ -177,7 +177,7 @@ function GetSketchDesigner() {
                                             <Image
                                               key={index}
                                               src={img}
-                                              width="60%"
+                                              width="30%"
                                               alt={`image-${index}`}
                                             />
                                           ))}

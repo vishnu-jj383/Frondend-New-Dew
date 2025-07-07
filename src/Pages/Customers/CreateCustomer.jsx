@@ -30,6 +30,8 @@ function CreateCustomer() {
     let newErrors = {};
     if (!formData.customer_first_name.trim())
       newErrors.customer_first_name = "First Name is required";
+     if (!formData.customer_username.trim())
+      newErrors.customer_username = "Custome Username is required";
     if (!formData.customer_type.trim())
       newErrors.customer_type = "Customer Type is required";
 

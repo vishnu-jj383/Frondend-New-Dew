@@ -350,7 +350,7 @@ const EmployeeList = () => {
                                   <td>{employee.Role?.roleName || "N/A"}</td>
                                   <td>
                                     <FaEdit
-                                      size={13}
+                                      size={15}
                                       className="action-icon"
                                       onClick={() => handleEdit(employee.id)}
                                     />

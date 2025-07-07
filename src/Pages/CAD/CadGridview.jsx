@@ -23,7 +23,7 @@ const CadGridview = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isSearchPending, setIsSearchPending] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const rowsPerPage = 8;
+  const rowsPerPage = 12;
   const navigate = useNavigate();
   const { orderId } = useParams();
 
@@ -235,7 +235,7 @@ const CadGridview = () => {
         <div className="">
           <div className="page-inner">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h3 className="fw-bold">CAD Approval List</h3>
+              <h3 className="fw-bold">CAD Grid View</h3>
               <button
                 className="btn btn-link p-0"
                 onClick={() => setIsFilterVisible(!isFilterVisible)}
@@ -269,7 +269,7 @@ const CadGridview = () => {
                           <label className="form-label">Status</label>
                           <select
                             name="status"
-                            className="form-select"
+                            className="form-control"
                             value={filters.status}
                             onChange={handleFilterChange}
                           >
@@ -280,7 +280,7 @@ const CadGridview = () => {
                           </select>
                         </div>
                         <div className="col-md-3">
-                          <br />
+                          <br /><br />
                           <button
                             className="btn btn-outline-primary"
                             onClick={handleClearFilter}

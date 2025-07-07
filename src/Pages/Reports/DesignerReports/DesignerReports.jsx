@@ -57,7 +57,8 @@ const DesignerReports = () => {
         { headers: { Authorization: `Bearer ${savedToken}` } }
       );
       setRows(response.data.data || []);
-      setTotalRecords(response.data.totalUsers || 0);
+      setTotalRecords(response.data.totalCount || 0);
+      // alert(response.data.totalCount || 0)
       setIsSearchActive(false);
     } catch (err) {
       handleError(err);

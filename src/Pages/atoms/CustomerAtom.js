@@ -7,11 +7,14 @@ import Cookies from "js-cookie";
 
 // Atom to store customer list
 export const customerListAtom = atom([]);
+export const designerListAtom = atom([]);
 
 // Custom hook to fetch customers
 export const useFetchCustomers = () => {
   const setCustomers = useSetAtom(customerListAtom);
+  const setDesigners = useSetAtom(designerListAtom);
   const CustomerAPI_URL = window.url + "customer/getAllCustomers";
+  const DesignerAPI_URL = window.url + "auth/getUsersByRoleType"; // Adjust endpoint as needed
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const handleError = (err) => {
@@ -34,8 +37,24 @@ export const useFetchCustomers = () => {
       handleError(err);
     }
   };
+  const fetchDesigners = async () => {
+       const savedToken = Cookies.get("authToken");
+    try {
+      const requestData = { type: "productDevelopment" };
+      const response = await axios.post(DesignerAPI_URL, requestData, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setDesigners(response.data.data || []);
+    } catch (err) {
+      console.error(`Failed to fetch setting types: ${err.message}`);
+    }
+    };
 
 
     fetchCustomers();
-  }, [setCustomers]); // Run once on mount
+    fetchDesigners();
+  }, [setCustomers,setDesigners]); // Run once on mount
 };

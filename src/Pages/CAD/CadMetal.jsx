@@ -117,9 +117,11 @@ function CadMetal() {
         const customerData = response.data.data || [];
         if (customerData.length > 0) {
           const firstItem = customerData[0];
+         
           setNumberof_Parts(firstItem.numberOfParts || "");
           setWeight(firstItem.grossWeight || "");
           setMakeType(firstItem.makeTypeId || "");
+          //  alert(firstItem.numberOfParts)
         }
       } catch (err) {
         setError("Failed to fetch assembly items.");
@@ -298,6 +300,7 @@ function CadMetal() {
     }
 
     const fetchCustomers = async (sizeMMId) => {
+      // alert(sizeMMId)
       try {
         const response = await axios.get(
           window.url + `materialItems/getSieve/${sizeMMId}`,
@@ -308,6 +311,7 @@ function CadMetal() {
         const customerData = response.data.data || {};
         setSieveSize(customerData.sieveSize || "");
         setCaratWeight(customerData.stoneWeight || "");
+        // alert("siveis"+customerData.id)
         setSizeGroup(
           customerData.diamondStoneSize?.diamondSizeGroup?.diamond_size_group ||
             ""
@@ -458,7 +462,7 @@ function CadMetal() {
       shapesId: parseInt(shapes) || null,
       shapesLabel:
         shapes_array.find((s) => s.id === parseInt(shapes))?.shape_name || "",
-      sieveId: parseInt(sieveSize) || null,
+      //  sieveId: parseInt(sieveSize) || null,
       sieveLabel: sieveSize,
       pieces: pieces ? parseInt(pieces) : null,
       grossWeight: caratWeight
@@ -543,12 +547,13 @@ function CadMetal() {
     });
 
     const savedToken = Cookies.get("authToken");
-
+    // alert(number_of_Parts)
     const dataToSend = {
       cadId: cadNo,
       sketchId: skitchid,
       orderId: orderId,
-      numberOfParts: number_of_Parts ? parseInt(number_of_Parts) : null,
+      // numberOfParts: number_of_Parts ? parseInt(number_of_Parts) : null,
+      numberOfParts: number_of_Parts,
       makeTypeId: Make_Type ? parseInt(Make_Type) : null,
       weight: weight ? parseFloat(weight) : null,
       materialInformation,
@@ -816,9 +821,10 @@ function CadMetal() {
                             </select>
                           </div>
                         </div>
+                     
                         <div className="col-md-3">
                           <div className="form-group">
-                            <label htmlFor="sizeMM">Size MM *</label>
+                            <label htmlFor="sizeMM">Size MM * </label>
                             <select
                               className="form-select pd-select"
                               id="sizeMM"
@@ -840,6 +846,7 @@ function CadMetal() {
                             </select>
                           </div>
                         </div>
+                        
                         <div className="col-md-3">
                           <div className="form-group">
                             <label htmlFor="sieveSize">Sieve Size *</label>
@@ -864,6 +871,11 @@ function CadMetal() {
                             />
                           </div>
                         </div>
+                        
+                         {/* </div> */}
+
+
+                      <div className="row">
                         <div className="col-md-3">
                           <div className="form-group">
                             <label htmlFor="pieces">Pieces *</label>
@@ -910,7 +922,7 @@ function CadMetal() {
                               ))}
                             </select>
                           </div>
-                        </div>
+                        </div> 
                         <div className="col-md-3">
                           <div className="form-group">
                             <label htmlFor="sizeGroup">Size Group *</label>
@@ -923,6 +935,12 @@ function CadMetal() {
                             />
                           </div>
                         </div>
+                      </div>
+                     
+
+
+
+{/* <div className="row"> */}
                         <div className="col-md-3">
                           <div className="form-group">
                             <label htmlFor="quality">Quality *</label>
@@ -984,6 +1002,7 @@ function CadMetal() {
                           </div>
                         </div>
                       </div>
+                      
                     )}
 
                     {materialType == 1 && (
@@ -1193,6 +1212,7 @@ function CadMetal() {
                         </button>
                       </div>
                     </center>
+                    <br/>
                   </>
                 )}
 
@@ -1222,8 +1242,10 @@ function CadMetal() {
                   >
                     Save
                   </button>
+                 
                 </div>
               </center>
+               <br/>
             </div>
           </div>
         </div>

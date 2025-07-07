@@ -352,7 +352,7 @@ const DesignMaster = () => {
                                       {Array.isArray(row.imageUrls) && row.imageUrls.length > 0 ? (
                                         <Image.PreviewGroup>
                                           {row.imageUrls.map((img, index) => (
-                                            <Image key={index} src={img} width="60%" alt={`image-${index}`} />
+                                            <Image key={index} src={img} width="80%" alt={`image-${index}`} />
                                           ))}
                                         </Image.PreviewGroup>
                                       ) : row.imageUrls ? (

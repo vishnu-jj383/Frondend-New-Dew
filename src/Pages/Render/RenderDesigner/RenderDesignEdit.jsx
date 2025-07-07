@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import { FaArrowLeft } from "react-icons/fa";
-
-// Utility function to format date to YYYY-MM-DD in local timezone
+import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
 const formatDateToLocal = (date) => {
   if (!date) return "";
   const d = new Date(date);
@@ -16,8 +14,7 @@ const formatDateToLocal = (date) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-
-function EditSketchDesigner() {
+function RenderDesignEdit() {
   const { designerId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -31,8 +28,8 @@ function EditSketchDesigner() {
   const [imagePreview, setImagePreview] = useState(null);
   const [approvedForDew, setApprovedForDew] = useState(false);
   const [approvedForCustomer, setApprovedForCustomer] = useState(false);
-  const [sketchId, setSketchid] = useState("");
-
+  // const [specialInstruction, setSpecialInstruction] = useState("");
+  const [renderId, setRenderid] = useState("");
   const API_URL = window.url + `tasks/getTaskById/${designerId}`;
 
   useEffect(() => {
@@ -44,6 +41,14 @@ function EditSketchDesigner() {
     }
 
     const fetchCustomers = async () => {
+      // try {
+      // const requestData = { orderId: orderId ,type:"cad"};
+      // const response = await axios.post(API_URL, requestData, {
+      //     headers: {
+      //         Authorization: `Bearer ${savedToken}`,
+      //         "Content-Type": "application/json"
+      //     }
+      // });
       try {
         const response = await axios.get(API_URL, {
           headers: {
@@ -54,14 +59,21 @@ function EditSketchDesigner() {
         const customerData = response.data.data || {};
 
         setTaskId(customerData.taskId || "");
-        setName(customerData.Employee?.name || "");
-        // Normalize dates to local timezone
+        setName(customerData.Employee.name || "");
+        // const briefDate = customerData.startDate
+        //   ? new Date(customerData.startDate).toISOString().split("T")[0]
+        //   : "";
+        // const completedDate = customerData.endDate
+        //   ? new Date(customerData.endDate).toISOString().split("T")[0]
+        //   : "";
+        // setStartDate(briefDate);
+        // setEndDate(completedDate);
         setStartDate(formatDateToLocal(customerData.startDate));
         setEndDate(formatDateToLocal(customerData.endDate));
         setImageUrls(customerData.imageUrls || "");
-        setApprovedForCustomer(customerData.isApprovedCustomer || false);
-        setApprovedForDew(customerData.isApprovedOwn || false);
-        setSketchid(customerData.sketchId || "");
+        setApprovedForCustomer(customerData.isApprovedCustomer || "");
+        setApprovedForDew(customerData.isApprovedOwn || "");
+        setRenderid(customerData.renderId || "");
       } catch (err) {
         setError("Failed to fetch customer data.");
         console.error(err);
@@ -71,7 +83,7 @@ function EditSketchDesigner() {
     };
 
     fetchCustomers();
-  }, [navigate, designerId]);
+  }, [navigate, designerId]); // Added customerId dependency
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,30 +95,30 @@ function EditSketchDesigner() {
         title: "Image Required",
         text: "Please upload an image before submitting.",
       });
-      return;
+      return; // Stop submission
     }
 
     // Date validation
-    const hasStartDate = startDate && startDate.trim() !== "";
-    const hasEndDate = endDate && endDate.trim() !== "";
-
-    if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
-      Swal.fire({
-        icon: "warning",
-        title: "Dates Required",
-        text: "Both Start Date and End Date are required if one is provided.",
-      });
-      return;
-    }
-
-    if (hasStartDate && hasEndDate && new Date(endDate) < new Date(startDate)) {
-      Swal.fire({
-        icon: "error",
-        title: "Invalid Dates",
-        text: "End Date cannot be before Start Date. Please correct the dates.",
-      });
-      return;
-    }
+       const hasStartDate = startDate && startDate.trim() !== "";
+       const hasEndDate = endDate && endDate.trim() !== "";
+   
+       if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+         Swal.fire({
+           icon: "warning",
+           title: "Dates Required",
+           text: "Both Start Date and End Date are required if one is provided.",
+         });
+         return;
+       }
+   
+       if (hasStartDate && hasEndDate && new Date(endDate) < new Date(startDate)) {
+         Swal.fire({
+           icon: "error",
+           title: "Invalid Dates",
+           text: "End Date cannot be before Start Date. Please correct the dates.",
+         });
+         return;
+       }
 
     try {
       const savedToken = Cookies.get("authToken");
@@ -120,16 +132,17 @@ function EditSketchDesigner() {
         return;
       }
 
+      // Dynamically build the payload, excluding null/undefined/empty startDate and endDate
       const payload = {
         isApprovedCustomer: Boolean(approvedForCustomer),
         isApprovedOwn: Boolean(approvedForDew),
       };
 
       if (hasStartDate) {
-        payload.startDate = startDate; // Send YYYY-MM-DD as is
+        payload.startDate = startDate;
       }
       if (hasEndDate) {
-        payload.endDate = endDate; // Send YYYY-MM-DD as is
+        payload.endDate = endDate;
       }
 
       const response = await axios.put(
@@ -148,16 +161,25 @@ function EditSketchDesigner() {
         title: "Updated Successfully",
         text: "The task has been updated successfully.",
       }).then(() => {
-        navigate("/sketchApproval");
+        // navigate("/renderApproval__list");
+        navigate(`/render_designer/${renderId}`);
       });
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Update Failed",
-        text: error.response
-          ? JSON.stringify(error.response.data)
-          : "An error occurred while updating the customer.",
-      });
+      if (error.response) {
+        console.error("Error Response:", error.response.data);
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Error updating : " + JSON.stringify(error.response.data),
+        });
+      } else {
+        console.error("Error Message:", error.message);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred while updating .",
+        });
+      }
     }
   };
 
@@ -174,24 +196,20 @@ function EditSketchDesigner() {
     });
 
     if (!confirmDelete.isConfirmed) {
-      return;
+      return; // Stop execution if the user cancels
     }
 
     try {
       const savedToken = Cookies.get("authToken");
 
       if (!savedToken) {
-        Swal.fire({
-          icon: "error",
-          title: "Authorization Error",
-          text: "Authorization token not found.",
-        });
+        alert("Authorization token not found.");
         return;
       }
 
       const dataToSend = {
         taskId: designerId,
-        imageUrls: imageUrls,
+        imageUrls: imageUrls, // Send the image URL to delete
       };
 
       const response = await axios.delete(window.url + "tasks/deleteImages", {
@@ -199,7 +217,7 @@ function EditSketchDesigner() {
           Authorization: `Bearer ${savedToken}`,
           "Content-Type": "application/json",
         },
-        data: dataToSend,
+        data: dataToSend, // For DELETE requests, data should be passed here
       });
 
       Swal.fire({
@@ -208,8 +226,8 @@ function EditSketchDesigner() {
         text: "The image has been successfully deleted.",
       });
 
-      setImageUrls("");
-      setImagePreview(null);
+      setImageUrls(""); // Clear the image after successful deletion
+      setImagePreview(null); // Clear the preview as well
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -218,7 +236,6 @@ function EditSketchDesigner() {
       });
     }
   };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImageUrls(file);
@@ -230,7 +247,6 @@ function EditSketchDesigner() {
       setImagePreview(null);
     }
   };
-
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -238,112 +254,144 @@ function EditSketchDesigner() {
       }
     };
   }, [imagePreview]);
-
   const handleImageUpload = async (e) => {
     e.preventDefault();
 
     const savedToken = Cookies.get("authToken");
 
+    // Create the data object with the necessary fields (e.g., id)
     const formData = new FormData();
+    // alert(parseInt(tasksavedId))
     formData.append("images", imageUrls);
     formData.append("taskId", designerId);
 
     try {
+      // Show a loading alert or initial message
       Swal.fire({
         icon: "info",
         title: "Processing Image...",
         text: "Your image is being uploaded, please wait.",
         showConfirmButton: false,
-        allowOutsideClick: false,
+        allowOutsideClick: false, // Prevent closing the modal until action is complete
       });
 
-      const response = await axios.post(window.url + "tasks/uploadImage", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${savedToken}`,
-        },
-      });
+      const response = await axios.post(
+        window.url + "tasks/uploadImage",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Correct header for file upload
+            Authorization: `Bearer ${savedToken}`,
+          },
+        }
+      );
 
+      // Close the info alert once the process is complete
       Swal.close();
 
+      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Image Saved",
-        text: "Sketch image has been saved successfully.",
+        text: "Render image has been saved successfully.",
       });
 
-      navigate("/sketchApproval");
+      // Navigate to the desired page after successful image upload
+      // navigate("/renderApproval__list");
+      navigate(`/render_designer/${renderId}`);
+      //  navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
+      // Close the info alert if there is an error
+
       Swal.close();
 
+      console.error(
+        "Error uploading image:",
+        error.response ? error.response.data : error.message
+      );
+
+      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error.response
-          ? JSON.stringify(error.response.data)
-          : error.message,
+        text:
+          "Error: " +
+          (error.response
+            ? JSON.stringify(error.response.data)
+            : error.message),
       });
     }
   };
 
   const handleFormAndImageUpload = async (e) => {
-    e.preventDefault();
     if (imageUrls && imageUrls instanceof File) {
-      await handleImageUpload(e);
+      await handleImageUpload(e); // Call handleImageUpload if valid file is selected
     }
+
+    // After form submission completes, handle the image upload
+    // await CustomerApprove(e);
+    // await DewApprove(e);
     await handleSubmit(e);
   };
-
-  const handleBack = () => {
-    navigate(`/sketch_designer/${sketchId}`);
+  const handleBack = (customerId) => {
+    navigate(`/render_designer/${customerId}`);
   };
 
   return (
     <main className="main-content">
       <Content>
         <div className="">
-          <button className="btn mb-3" onClick={handleBack}>
-            <FaArrowLeft className="me-2" size={25} />
+          <button className="btn  mb-3" onClick={() => handleBack(renderId)}>
+            <FaArrowLeft className="me-2" size={25} />{" "}
+            {/* Icon with margin-end */}
           </button>
           <div className="page-inner">
-            <div className="page-header"></div>
+            <div className="page-header">
+              {/* <h3 className="fw-bold mb-3">CAD Edit</h3> */}
+            </div>
+
+            {/* Order Form */}
             <div className="card">
-              <div className="card-header text-white">
+              <div className="card-header  text-white">
                 <center>
                   <h5 style={{ color: "black" }}>Designer Edit</h5>
                 </center>
               </div>
               <div className="card-body">
                 <div className="row">
+                  {/* Customer Selection */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="taskIdInput">Task No</label>
+                      <label htmlFor="customerSelect">Task No </label>
                       <input
                         disabled
                         type="text"
                         className="form-control"
-                        id="taskIdInput"
+                        id="emailInput"
                         value={taskId}
                         onChange={(e) => setTaskId(e.target.value)}
                         placeholder="Enter taskId"
                       />
                     </div>
                   </div>
+
+                  {/* Email Input */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="nameInput">Name</label>
+                      <label htmlFor="emailInput">Name</label>
                       <input
                         disabled
                         type="text"
                         className="form-control"
-                        id="nameInput"
+                        id="emailInput"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter Name"
+                        placeholder="Enter OrderId"
                       />
                     </div>
                   </div>
                 </div>
+
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -373,7 +421,9 @@ function EditSketchDesigner() {
                     </div>
                   </div>
                 </div>
-                {imageUrls.length > 0 && (
+
+                {/* Show image preview only if imageUrls has a valid value */}
+                {imageUrls.length > 0 ? (
                   <div
                     style={{
                       position: "relative",
@@ -390,13 +440,16 @@ function EditSketchDesigner() {
                       width="100%"
                       height="auto"
                     />
+                    {/* Close button for deleting image */}
                     <button
-                      onClick={handleDeleteImage}
+                      onClick={() => {
+                        handleDeleteImage();
+                      }}
                       title="Delete"
                       style={{
                         position: "absolute",
-                        top: "-15px",
-                        right: "-15px",
+                        top: "-5px",
+                        right: "5px",
                         background: "transparent",
                         border: "none",
                         color: "red",
@@ -407,14 +460,16 @@ function EditSketchDesigner() {
                       X
                     </button>
                   </div>
-                )}
+                ) : null}
+
+                {/* File Upload input, enabled only if no image exists */}
                 <div className="form-group" style={{ marginTop: "10px" }}>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     className="form-control"
-                    disabled={imageUrls.length > 0}
+                    disabled={imageUrls.length > 0} // Disable if image exists
                   />
                 </div>
                 {imagePreview && (
@@ -435,7 +490,9 @@ function EditSketchDesigner() {
                     </div>
                   </div>
                 )}
-                <br />
+
+                {/* Action Buttons */}
+                <br></br>
                 <div className="row">
                   <div className="col-md-6">
                     <input
@@ -444,7 +501,8 @@ function EditSketchDesigner() {
                       onChange={(e) => setApprovedForDew(e.target.checked)}
                       className="custom-checkbox"
                     />
-                    <label>Select for abc</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <label>Select for Dew</label>
                   </div>
                   <div className="col-md-6">
                     <input
@@ -453,11 +511,11 @@ function EditSketchDesigner() {
                       onChange={(e) => setApprovedForCustomer(e.target.checked)}
                       className="custom-checkbox"
                     />
+                    &nbsp;&nbsp;&nbsp;
                     <label>Select for Customer</label>
                   </div>
                 </div>
               </div>
-              <br />
               <div className="card-action">
                 <center>
                   <button
@@ -466,9 +524,10 @@ function EditSketchDesigner() {
                     onClick={handleFormAndImageUpload}
                   >
                     Submit
-                  </button>
+                  </button>{" "}
+                  &nbsp;&nbsp;&nbsp;
                 </center>
-                <br />
+                <br/>
               </div>
             </div>
           </div>
@@ -478,5 +537,4 @@ function EditSketchDesigner() {
     </main>
   );
 }
-
-export default EditSketchDesigner;
+export default RenderDesignEdit;

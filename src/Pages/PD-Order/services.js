@@ -4,9 +4,10 @@ import Cookies from "js-cookie";
 import { addFilteredPdLists, addPdLists } from "../../reducers/pdListReducer";
 
 const token = Cookies.get("authToken");
-// const url = import.meta.env.VITE_API_URL;
-const url=window.url
+const url = process.env.REACT_APP_API_KEY;
+// const url=window.url
 export const getItemsFromApi = async (setPdFetchItems) => {
+//  alert(url)
   try {
     const customerResponse = await axios.get(`${url}customer/getAllCustomers`, {
       headers: {

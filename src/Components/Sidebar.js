@@ -94,6 +94,10 @@ function Sidebar({ isSidebarOpen, toggleSidebar }) {
         },
         { path: "/insightReports", label: "Insight Report", icon: "🔍" },
         { path: "/feedbacklist", label: "Feedback", icon: "💬" },
+        { path: "/cadReports", label: "CAD Report", icon: "📐" },
+         { path: "/categoryReports", label: "Category Report", icon: "📋" },
+        
+        
       ],
     },
     {

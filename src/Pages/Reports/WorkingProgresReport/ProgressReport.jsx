@@ -39,7 +39,7 @@ function ProgressReport() {
     startDate: "",
     endDate: "",
     designer: "",
-    taskNo: "", 
+    orderNo: "", 
   });
 
   useEffect(() => {
@@ -70,6 +70,7 @@ function ProgressReport() {
         { headers: { Authorization: `Bearer ${savedToken}` } }
       );
       setRows(response.data.data || []);
+      // alert(response.data.totalRecords )
       setTotalRecords(response.data.totalRecords || 0);
       setIsSearchActive(false);
     } catch (err) {
@@ -165,7 +166,7 @@ function ProgressReport() {
       startDate: "",
       endDate: "",
       designer: "",
-      taskNo: "",
+      orderNo: "",
     });
     setCurrentPage(1);
     setIsSearchActive(false);
@@ -270,15 +271,15 @@ function ProgressReport() {
                     <div className="card-body filter-section">
                       <div className="row g-3 align-items-end">
                         <div className="col-md-3">
-                          <label className="form-label">Task No</label>
-                          <input
-                            type="text"
-                            name="taskNo"
-                            className="form-control"
-                            value={filters.taskNo}
-                            onChange={handleFilterChange}
-                            placeholder="Search by Task No"
-                          />
+                          <label className="form-label">Order No</label>
+                            <input
+                          type="text"
+                          name="orderNo"
+                          className="form-control"
+                          value={filters.orderNo}
+                          onChange={handleFilterChange}
+                          placeholder="Search by Order No"
+                        />
                         </div>
                         <div className="col-md-3">
                           <label className="form-label">Designer</label>
@@ -313,7 +314,7 @@ function ProgressReport() {
                           </select>
                         </div>
                         <div className="col-md-3">
-                          <label className="form-label">Order Status</label>
+                          <label className="form-label">Department</label>
                           <select
                             name="orderStatus"
                             className="form-control"
@@ -382,9 +383,9 @@ function ProgressReport() {
                           <table className="display table table-striped table-hover customer-table">
                             <thead>
                               <tr>
-                                <th>Task No</th>
+                                {/* <th>Task No</th> */}
                                 <th>Order No</th>
-                                <th>Order Status</th>
+                                <th>Department</th>
                                 <th>Customer Name</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -396,7 +397,7 @@ function ProgressReport() {
                               {rows.length > 0 ? (
                                 rows.map((row) => (
                                   <tr key={row.id}>
-                                    <td>{row.taskNo}</td>
+                                    {/* <td>{row.taskNo}</td> */}
                                     <td>{row.orderNo}</td>
                                     <td>{row.orderStatus || "N/A"}</td>
                                     <td>{row.customerName || "N/A"}</td>

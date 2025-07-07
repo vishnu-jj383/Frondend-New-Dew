@@ -13,7 +13,7 @@ function ViewCad() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [orderData, setOrderData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
 
   const API_URL = window.url + `cad/getCadById/${id}`;
@@ -347,13 +347,14 @@ function ViewCad() {
       <Content>
         <div className="main-panel">
           <div className="vieworder-container">
+             <button onClick={handlePrint} className="btn btn-link p-0 me-2"  title="Download PDF">
+                                         <FaPrint size={25} className="text-muted"  /> 
+                                        </button>
             <h4 className="vieworder-heading">
               {order.categoryGroup?.category_group_name}
             </h4>
-            <button onClick={handlePrint} className="btn btn-primary print-btn">
-              <FaPrint /> Print PDF
-            </button>
-            <br></br>
+          
+            
             <div className="vieworder-cards">
               {/* CAD Images Card */}
               <div className="vieworder-card image-card">

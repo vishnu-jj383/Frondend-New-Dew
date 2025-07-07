@@ -9,8 +9,8 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { FaUpload } from "react-icons/fa";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import { Modal, Image } from "antd";
 
@@ -170,7 +170,7 @@ function GetDesignerList() {
                                             <Image
                                               key={index}
                                               src={img}
-                                              width="50%"
+                                              width="30%"
                                               alt={`image-${index}`}
                                             />
                                           ))}

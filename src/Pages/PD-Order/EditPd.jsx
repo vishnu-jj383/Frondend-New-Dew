@@ -8,6 +8,15 @@ import Cookies from "js-cookie";
 import moment from 'moment'; // Add this import
 import Swal from "sweetalert2";
 
+const formatDateToLocal = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 function EditPd() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -226,14 +235,8 @@ function EditPd() {
 
         setOrderNo(orderData.orderNo || "");
         // setOrderDate(orderData.orderDate || "");
-        const briefDate = orderData.orderDate 
-        ? new Date(orderData.orderDate).toISOString().split('T')[0] 
-        : "";
-        const completedDate = orderData.promiseDate
-          ? new Date(orderData.promiseDate).toISOString().split("T")[0]
-          : "";
-          setOrderDate(briefDate);
-        setPromiseDate(completedDate);
+         setOrderDate(formatDateToLocal(orderData.orderDate));
+        setPromiseDate(formatDateToLocal(orderData.promiseDate));
         setRequiredDesignCount(orderData.requiredDesignCount || "");
         setExpectedGrossWt(orderData.expectedGrossWt || "");
         setExpectedNetWt(orderData.expectedNetWt || "");
@@ -279,35 +282,78 @@ function EditPd() {
         });
         return;
       }
+      const result = await Swal.fire({
+              title: "Do You Want To Save Changes?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonText: "Yes, Save It!",
+              cancelButtonText: "No, Cancel",
+            });
+      
+            if (!result.isConfirmed) {
+              // If the user cancels, do nothing
+              return;
+            }
+
+       // Date validation
+          const hasStartDate = orderDate && orderDate.trim() !== "";
+          const hasEndDate = promiseDate && promiseDate.trim() !== "";
+      
+          if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+            Swal.fire({
+              icon: "warning",
+              title: "Dates Required",
+              text: "Both Order Date and Promise Date are required if one is provided.",
+            });
+            return;
+          }
+      
+          if (hasStartDate && hasEndDate && new Date(promiseDate) < new Date(orderDate)) {
+            Swal.fire({
+              icon: "error",
+              title: "Invalid Dates",
+              text: "Promise Date cannot be before Order Date. Please correct the dates.",
+            });
+            return;
+          }
+          
+
+      const payload = {
+        orderNo,
+        requiredDesignCount: parseFloat(requiredDesignCount) || 0, // Handle float
+        expectedGrossWt: parseFloat(expectedGrossWt) || 0,
+        expectedNetWt: parseFloat(expectedNetWt) || 0,
+        remarks,
+        diamondRange,
+        colorStoneRange,
+        priority,
+        isItemReceived,
+        status,
+        orderStatus,
+        customerId: customerName,
+        productTypeId: productType,
+        genderId: gender,
+        categoryGroupId: categoryGroup,
+        categoryId: categoryName,
+        subcategoryId: subcategoryName,
+        brandId: brandName,
+        styleId: styleName,
+        occasionId: occasion,
+        metalTypeId: metalType,
+        metalColorId: metalColor,
+      };
+
+      if (hasStartDate) {
+        payload.orderDate = orderDate; // Already in YYYY-MM-DD
+      }
+      if (hasEndDate) {
+        payload.promiseDate = promiseDate; // Already in YYYY-MM-DD
+      }
+
 
       const response = await axios.put(
         window.url + `order/editOrder/${id}`,
-        {
-          orderNo,
-          orderDate,
-          promiseDate,
-          requiredDesignCount,
-          expectedGrossWt,
-          expectedNetWt,
-          remarks,
-          diamondRange,
-          colorStoneRange,
-          priority,
-          isItemReceived,
-          status,
-          orderStatus,
-          customerId: customerName,
-          productTypeId: productType,
-          genderId: gender,
-          categoryGroupId: categoryGroup,
-          categoryId: categoryName,
-          subcategoryId: subcategoryName,
-          brandId: brandName,
-          styleId: styleName,
-          occasionId: occasion,
-          metalTypeId: metalType,
-          metalColorId: metalColor,
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${savedToken}`,
@@ -319,7 +365,7 @@ function EditPd() {
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Order updated successfully.",
+        text: "Order Updated Successfully.",
       }).then(() => {
         navigate("/pdLists");
       });
@@ -383,7 +429,16 @@ function EditPd() {
                       <div className="col-md-3">
                         <div className="form-group">
                           <label>Order Date</label>
-                          <input
+                           <input
+                        type="date"
+                        className="form-control"
+                        id="startDateInput"
+                        value={orderDate}
+                        onChange={(e) => setOrderDate(e.target.value)}
+                        placeholder="Select a date"
+                        disabled
+                      />
+                          {/* <input
                             type="text"
                             className="form-control"
                             value={orderDate}
@@ -391,7 +446,7 @@ function EditPd() {
                             onChange={(e) => setOrderDate(e.target.value)}
                             placeholder="Select a date"
                             disabled
-                          />
+                          /> */}
                         </div>
                       </div>
 
@@ -408,7 +463,7 @@ function EditPd() {
                                                     onChange={handleChange}
                                                 /> */}
 
-                          <input
+                          {/* <input
                             type="date"
                             className="form-control"
                             value={promiseDate}
@@ -416,7 +471,16 @@ function EditPd() {
                             min={orderDate} // Restrict to dates after start date
                             disabled={!orderDate} // Disable until start date is selected
                             required
-                          />
+                          /> */}
+                          <input
+                        type="date"
+                        className="form-control"
+                        id="endDateInput"
+                        value={promiseDate}
+                        onChange={(e) => setPromiseDate(e.target.value)}
+                        min={orderDate}
+                        disabled={!orderDate}
+                      />
                           {/* <input
                             type="text"
                             className="form-control"
@@ -612,7 +676,8 @@ function EditPd() {
                             type="number"
                             className="form-control"
                             value={expectedGrossWt}
-                            min={0}
+                            // min={0}
+                            pattern="^\d*\.?\d{0,2}$" // Allows numbers with up to 2 decimal places
                             onChange={(e) => setExpectedGrossWt(e.target.value)}
                           />
                         </div>
@@ -626,7 +691,8 @@ function EditPd() {
                             type="number"
                             className="form-control"
                             value={expectedNetWt}
-                            min={0}
+                            // min={0}
+                            pattern="^\d*\.?\d{0,2}$" // Allows numbers with up to 2 decimal places
                             onChange={(e) => setExpectedNetWt(e.target.value)}
                           />
                         </div>

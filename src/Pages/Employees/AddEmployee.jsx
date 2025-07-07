@@ -244,20 +244,31 @@ const AddEmployee = () => {
         timer: 1500,
       });
 
-      navigate("/employeeLists");
+      navigate("/list_employe");
     } catch (error) {
       console.error(
         "Error creating employee:",
         error.response ? error.response.data : error.message
       );
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `Error: ${
-          error.response ? JSON.stringify(error.response.data) : error.message
-        }`,
-        showConfirmButton: true,
-      });
+      if (error.response && error.response.data === "Email or Employee ID already exists!") {
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "Email or Employee ID already exists. Please try a different one.",
+    showConfirmButton: true,
+  });
+} else {
+  const errorMessage = error.response && error.response.data?.message
+    ? error.response.data.message
+    : error.message || "An unexpected error occurred";
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: `Error: ${errorMessage}`,
+    showConfirmButton: true,
+  });
+}
+     
     }
   };
 

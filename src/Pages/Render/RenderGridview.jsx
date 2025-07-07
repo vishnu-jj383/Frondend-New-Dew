@@ -23,7 +23,7 @@ const RenderGridview = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isSearchPending, setIsSearchPending] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const rowsPerPage = 8; // Made constant since it wasn't being changed
+  const rowsPerPage = 12; // Made constant since it wasn't being changed
   const navigate = useNavigate();
   const { orderId } = useParams();
 
@@ -272,7 +272,7 @@ const RenderGridview = () => {
                           <label className="form-label">Status</label>
                           <select
                             name="status"
-                            className="form-select"
+                             className="form-control"
                             value={filters.status}
                             onChange={handleFilterChange}
                           >
@@ -283,7 +283,7 @@ const RenderGridview = () => {
                           </select>
                         </div>
                         <div className="col-md-3">
-                          <br />
+                          <br /><br/>
                           <button
                             className="btn btn-outline-primary"
                             onClick={handleClearFilter}

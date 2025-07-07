@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
+import { FaArrowLeft } from "react-icons/fa";
+
+// Utility function to format date to YYYY-MM-DD in local timezone
 const formatDateToLocal = (date) => {
   if (!date) return "";
   const d = new Date(date);
@@ -14,8 +16,10 @@ const formatDateToLocal = (date) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-function RenderDesignEdit() {
+
+function EditSketchDesigner() {
   const { designerId } = useParams();
+   const { orderId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,8 +32,8 @@ function RenderDesignEdit() {
   const [imagePreview, setImagePreview] = useState(null);
   const [approvedForDew, setApprovedForDew] = useState(false);
   const [approvedForCustomer, setApprovedForCustomer] = useState(false);
-  // const [specialInstruction, setSpecialInstruction] = useState("");
-  const [renderId, setRenderid] = useState("");
+  const [sketchId, setSketchid] = useState("");
+
   const API_URL = window.url + `tasks/getTaskById/${designerId}`;
 
   useEffect(() => {
@@ -41,14 +45,6 @@ function RenderDesignEdit() {
     }
 
     const fetchCustomers = async () => {
-      // try {
-      // const requestData = { orderId: orderId ,type:"cad"};
-      // const response = await axios.post(API_URL, requestData, {
-      //     headers: {
-      //         Authorization: `Bearer ${savedToken}`,
-      //         "Content-Type": "application/json"
-      //     }
-      // });
       try {
         const response = await axios.get(API_URL, {
           headers: {
@@ -59,21 +55,14 @@ function RenderDesignEdit() {
         const customerData = response.data.data || {};
 
         setTaskId(customerData.taskId || "");
-        setName(customerData.Employee.name || "");
-        // const briefDate = customerData.startDate
-        //   ? new Date(customerData.startDate).toISOString().split("T")[0]
-        //   : "";
-        // const completedDate = customerData.endDate
-        //   ? new Date(customerData.endDate).toISOString().split("T")[0]
-        //   : "";
-        // setStartDate(briefDate);
-        // setEndDate(completedDate);
+        setName(customerData.Employee?.name || "");
+        // Normalize dates to local timezone
         setStartDate(formatDateToLocal(customerData.startDate));
         setEndDate(formatDateToLocal(customerData.endDate));
         setImageUrls(customerData.imageUrls || "");
-        setApprovedForCustomer(customerData.isApprovedCustomer || "");
-        setApprovedForDew(customerData.isApprovedOwn || "");
-        setRenderid(customerData.renderId || "");
+        setApprovedForCustomer(customerData.isApprovedCustomer || false);
+        setApprovedForDew(customerData.isApprovedOwn || false);
+        setSketchid(customerData.sketchId || "");
       } catch (err) {
         setError("Failed to fetch customer data.");
         console.error(err);
@@ -83,7 +72,7 @@ function RenderDesignEdit() {
     };
 
     fetchCustomers();
-  }, [navigate, designerId]); // Added customerId dependency
+  }, [navigate, designerId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,30 +84,30 @@ function RenderDesignEdit() {
         title: "Image Required",
         text: "Please upload an image before submitting.",
       });
-      return; // Stop submission
+      return;
     }
 
     // Date validation
-       const hasStartDate = startDate && startDate.trim() !== "";
-       const hasEndDate = endDate && endDate.trim() !== "";
-   
-       if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
-         Swal.fire({
-           icon: "warning",
-           title: "Dates Required",
-           text: "Both Start Date and End Date are required if one is provided.",
-         });
-         return;
-       }
-   
-       if (hasStartDate && hasEndDate && new Date(endDate) < new Date(startDate)) {
-         Swal.fire({
-           icon: "error",
-           title: "Invalid Dates",
-           text: "End Date cannot be before Start Date. Please correct the dates.",
-         });
-         return;
-       }
+    const hasStartDate = startDate && startDate.trim() !== "";
+    const hasEndDate = endDate && endDate.trim() !== "";
+
+    if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Dates Required",
+        text: "Both Start Date and End Date are required if one is provided.",
+      });
+      return;
+    }
+
+    if (hasStartDate && hasEndDate && new Date(endDate) < new Date(startDate)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Dates",
+        text: "End Date cannot be before Start Date. Please correct the dates.",
+      });
+      return;
+    }
 
     try {
       const savedToken = Cookies.get("authToken");
@@ -132,17 +121,16 @@ function RenderDesignEdit() {
         return;
       }
 
-      // Dynamically build the payload, excluding null/undefined/empty startDate and endDate
       const payload = {
         isApprovedCustomer: Boolean(approvedForCustomer),
         isApprovedOwn: Boolean(approvedForDew),
       };
 
       if (hasStartDate) {
-        payload.startDate = startDate;
+        payload.startDate = startDate; // Send YYYY-MM-DD as is
       }
       if (hasEndDate) {
-        payload.endDate = endDate;
+        payload.endDate = endDate; // Send YYYY-MM-DD as is
       }
 
       const response = await axios.put(
@@ -161,24 +149,17 @@ function RenderDesignEdit() {
         title: "Updated Successfully",
         text: "The task has been updated successfully.",
       }).then(() => {
-        navigate("/renderApproval__list");
+        // navigate("/sketch_approvalLists");
+         navigate(`/sketch_designer/${orderId}`);
       });
     } catch (error) {
-      if (error.response) {
-        console.error("Error Response:", error.response.data);
-        Swal.fire({
-          icon: "error",
-          title: "Update Failed",
-          text: "Error updating : " + JSON.stringify(error.response.data),
-        });
-      } else {
-        console.error("Error Message:", error.message);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred while updating .",
-        });
-      }
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: error.response
+          ? JSON.stringify(error.response.data)
+          : "An error occurred while updating the customer.",
+      });
     }
   };
 
@@ -195,20 +176,24 @@ function RenderDesignEdit() {
     });
 
     if (!confirmDelete.isConfirmed) {
-      return; // Stop execution if the user cancels
+      return;
     }
 
     try {
       const savedToken = Cookies.get("authToken");
 
       if (!savedToken) {
-        alert("Authorization token not found.");
+        Swal.fire({
+          icon: "error",
+          title: "Authorization Error",
+          text: "Authorization token not found.",
+        });
         return;
       }
 
       const dataToSend = {
         taskId: designerId,
-        imageUrls: imageUrls, // Send the image URL to delete
+        imageUrls: imageUrls,
       };
 
       const response = await axios.delete(window.url + "tasks/deleteImages", {
@@ -216,7 +201,7 @@ function RenderDesignEdit() {
           Authorization: `Bearer ${savedToken}`,
           "Content-Type": "application/json",
         },
-        data: dataToSend, // For DELETE requests, data should be passed here
+        data: dataToSend,
       });
 
       Swal.fire({
@@ -225,8 +210,8 @@ function RenderDesignEdit() {
         text: "The image has been successfully deleted.",
       });
 
-      setImageUrls(""); // Clear the image after successful deletion
-      setImagePreview(null); // Clear the preview as well
+      setImageUrls("");
+      setImagePreview(null);
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -235,6 +220,7 @@ function RenderDesignEdit() {
       });
     }
   };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImageUrls(file);
@@ -246,6 +232,7 @@ function RenderDesignEdit() {
       setImagePreview(null);
     }
   };
+
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -253,143 +240,112 @@ function RenderDesignEdit() {
       }
     };
   }, [imagePreview]);
+
   const handleImageUpload = async (e) => {
     e.preventDefault();
 
     const savedToken = Cookies.get("authToken");
 
-    // Create the data object with the necessary fields (e.g., id)
     const formData = new FormData();
-    // alert(parseInt(tasksavedId))
     formData.append("images", imageUrls);
     formData.append("taskId", designerId);
 
     try {
-      // Show a loading alert or initial message
       Swal.fire({
         icon: "info",
         title: "Processing Image...",
         text: "Your image is being uploaded, please wait.",
         showConfirmButton: false,
-        allowOutsideClick: false, // Prevent closing the modal until action is complete
+        allowOutsideClick: false,
       });
 
-      const response = await axios.post(
-        window.url + "tasks/uploadImage",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // Correct header for file upload
-            Authorization: `Bearer ${savedToken}`,
-          },
-        }
-      );
+      const response = await axios.post(window.url + "tasks/uploadImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
 
-      // Close the info alert once the process is complete
       Swal.close();
 
-      // Show success alert
       Swal.fire({
         icon: "success",
         title: "Image Saved",
-        text: "Render image has been saved successfully.",
+        text: "Sketch image has been saved successfully.",
       });
 
-      // Navigate to the desired page after successful image upload
-      navigate("/renderApproval__list");
-      //  navigate(`/render_designer_edit/${designerId}`);
+      navigate(`/sketch_designer/${orderId}`);
     } catch (error) {
-      // Close the info alert if there is an error
-
       Swal.close();
 
-      console.error(
-        "Error uploading image:",
-        error.response ? error.response.data : error.message
-      );
-
-      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Error",
-        text:
-          "Error: " +
-          (error.response
-            ? JSON.stringify(error.response.data)
-            : error.message),
+        text: error.response
+          ? JSON.stringify(error.response.data)
+          : error.message,
       });
     }
   };
 
   const handleFormAndImageUpload = async (e) => {
+    e.preventDefault();
     if (imageUrls && imageUrls instanceof File) {
-      await handleImageUpload(e); // Call handleImageUpload if valid file is selected
+      await handleImageUpload(e);
     }
-
-    // After form submission completes, handle the image upload
-    // await CustomerApprove(e);
-    // await DewApprove(e);
     await handleSubmit(e);
   };
-  const handleBack = (customerId) => {
-    navigate(`/render_designer/${customerId}`);
+
+  const handleBack = () => {
+    navigate(`/sketch_designer/${orderId}`);
   };
 
   return (
     <main className="main-content">
       <Content>
         <div className="">
-          <button className="btn  mb-3" onClick={() => handleBack(renderId)}>
-            <FaArrowLeft className="me-2" size={25} />{" "}
-            {/* Icon with margin-end */}
+          <button className="btn mb-3" onClick={handleBack}>
+            <FaArrowLeft className="me-2" size={25} />
           </button>
           <div className="page-inner">
-            <div className="page-header">
-              {/* <h3 className="fw-bold mb-3">CAD Edit</h3> */}
-            </div>
-
-            {/* Order Form */}
+            <div className="page-header"></div>
             <div className="card">
-              <div className="card-header  text-white">
+              <div className="card-header text-white">
                 <center>
                   <h5 style={{ color: "black" }}>Designer Edit</h5>
                 </center>
               </div>
               <div className="card-body">
                 <div className="row">
-                  {/* Customer Selection */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="customerSelect">Task No </label>
+                      <label htmlFor="taskIdInput">Task No</label>
                       <input
                         disabled
                         type="text"
                         className="form-control"
-                        id="emailInput"
+                        id="taskIdInput"
                         value={taskId}
                         onChange={(e) => setTaskId(e.target.value)}
                         placeholder="Enter taskId"
                       />
                     </div>
                   </div>
-
-                  {/* Email Input */}
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="emailInput">Name</label>
+                      <label htmlFor="nameInput">Name</label>
                       <input
                         disabled
                         type="text"
                         className="form-control"
-                        id="emailInput"
+                        id="nameInput"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter OrderId"
+                        placeholder="Enter Name"
                       />
                     </div>
                   </div>
                 </div>
-
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
@@ -419,9 +375,7 @@ function RenderDesignEdit() {
                     </div>
                   </div>
                 </div>
-
-                {/* Show image preview only if imageUrls has a valid value */}
-                {imageUrls.length > 0 ? (
+                {imageUrls.length > 0 && (
                   <div
                     style={{
                       position: "relative",
@@ -438,16 +392,13 @@ function RenderDesignEdit() {
                       width="100%"
                       height="auto"
                     />
-                    {/* Close button for deleting image */}
                     <button
-                      onClick={() => {
-                        handleDeleteImage();
-                      }}
+                      onClick={handleDeleteImage}
                       title="Delete"
                       style={{
                         position: "absolute",
-                        top: "-5px",
-                        right: "5px",
+                        top: "-15px",
+                        right: "-15px",
                         background: "transparent",
                         border: "none",
                         color: "red",
@@ -458,16 +409,14 @@ function RenderDesignEdit() {
                       X
                     </button>
                   </div>
-                ) : null}
-
-                {/* File Upload input, enabled only if no image exists */}
+                )}
                 <div className="form-group" style={{ marginTop: "10px" }}>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     className="form-control"
-                    disabled={imageUrls.length > 0} // Disable if image exists
+                    disabled={imageUrls.length > 0}
                   />
                 </div>
                 {imagePreview && (
@@ -488,9 +437,7 @@ function RenderDesignEdit() {
                     </div>
                   </div>
                 )}
-
-                {/* Action Buttons */}
-                <br></br>
+                <br />
                 <div className="row">
                   <div className="col-md-6">
                     <input
@@ -499,8 +446,7 @@ function RenderDesignEdit() {
                       onChange={(e) => setApprovedForDew(e.target.checked)}
                       className="custom-checkbox"
                     />
-                    &nbsp;&nbsp;&nbsp;
-                    <label>Select for Dew</label>
+                    &nbsp; &nbsp;<label>Select for abc</label>
                   </div>
                   <div className="col-md-6">
                     <input
@@ -509,11 +455,11 @@ function RenderDesignEdit() {
                       onChange={(e) => setApprovedForCustomer(e.target.checked)}
                       className="custom-checkbox"
                     />
-                    &nbsp;&nbsp;&nbsp;
-                    <label>Select for Customer</label>
+                    &nbsp; &nbsp; <label>Select for Customer</label>
                   </div>
                 </div>
               </div>
+              <br />
               <div className="card-action">
                 <center>
                   <button
@@ -522,9 +468,9 @@ function RenderDesignEdit() {
                     onClick={handleFormAndImageUpload}
                   >
                     Submit
-                  </button>{" "}
-                  &nbsp;&nbsp;&nbsp;
+                  </button>
                 </center>
+                <br />
               </div>
             </div>
           </div>
@@ -534,4 +480,5 @@ function RenderDesignEdit() {
     </main>
   );
 }
-export default RenderDesignEdit;
+
+export default EditSketchDesigner;

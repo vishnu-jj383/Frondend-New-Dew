@@ -8,6 +8,15 @@ import Cookies from "js-cookie";
 // import { useSelector } from "react-redux";
 import Content from "../../Components/Content";
 import Swal from "sweetalert2";
+
+const formatDateToLocal = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 function EditSkitch() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -52,18 +61,8 @@ function EditSkitch() {
         const customerData = response.data.data || {};
         setSketchNo(customerData.sketchNo || "");
         setorderId(customerData.orderId || "");
-        const briefDate = customerData.sketchBriefDate
-          ? new Date(customerData.sketchBriefDate).toISOString().split("T")[0]
-          : "";
-        const completedDate = customerData.sketchCompletedDate
-          ? new Date(customerData.sketchCompletedDate)
-              .toISOString()
-              .split("T")[0]
-          : "";
-        // setRenderBriefDate(briefDate);
-        // setRenderCompletedDate(completedDate);
-        setSketchBriefDate(briefDate);
-        setSketchCompletedDate(completedDate);
+        setSketchBriefDate(formatDateToLocal(customerData.sketchBriefDate));
+        setSketchCompletedDate(formatDateToLocal(customerData.sketchCompletedDate));
         setPromiseDate(customerData.promiseDate || "");
         setReqSketchCount(customerData.reqSketchCount || "");
         setSelectedSketchCount(customerData.selectedSketchCount || "");
@@ -121,16 +120,54 @@ function EditSkitch() {
         return;
       }
 
-      const response = await axios.put(
-        window.url + `sketch/editSketch/${id}`, // Use PUT for updating
-        {
-          sketchBriefDate: sketchBriefDate,
-          sketchCompletedDate: sketchCompletedDate,
+        // Date validation
+          const hasStartDate = sketchBriefDate && sketchBriefDate.trim() !== "";
+          const hasEndDate = sketchCompletedDate && sketchCompletedDate.trim() !== "";
+      
+          if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+            Swal.fire({
+              icon: "warning",
+              title: "Dates Required",
+              text: "Both Brief Date and Completed Date are required if one is provided.",
+            });
+            return;
+          }
+      
+          if (hasStartDate && hasEndDate && new Date(sketchCompletedDate) < new Date(sketchBriefDate)) {
+            Swal.fire({
+              icon: "error",
+              title: "Invalid Dates",
+              text: "End Date cannot be before Start Date. Please correct the dates.",
+            });
+            return;
+          }
+        const payload = {
+      //  sketchBriefDate: sketchBriefDate,
+      //     sketchCompletedDate: sketchCompletedDate,
           // promiseDate: promiseDate,
           reqSketchCount: parseInt(reqSketchCount),
           selectedSketchCount: parseInt(selectedSketchCount),
           specialInstructions: specialInstructions,
-        },
+      };
+
+      if (hasStartDate) {
+        payload.sketchBriefDate = sketchBriefDate; // Send YYYY-MM-DD as is
+      }
+      if (hasEndDate) {
+        payload.sketchCompletedDate = sketchCompletedDate; // Send YYYY-MM-DD as is
+      }
+
+      const response = await axios.put(
+        window.url + `sketch/editSketch/${id}`, // Use PUT for updating
+        payload,
+        // {
+        //   sketchBriefDate: sketchBriefDate,
+        //   sketchCompletedDate: sketchCompletedDate,
+        //   // promiseDate: promiseDate,
+        //   reqSketchCount: parseInt(reqSketchCount),
+        //   selectedSketchCount: parseInt(selectedSketchCount),
+        //   specialInstructions: specialInstructions,
+        // },
         {
           headers: {
             Authorization: `Bearer ${savedToken}`,
@@ -212,6 +249,14 @@ function EditSkitch() {
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>Sketch Brief Date</label>
+                         <input
+                        type="date"
+                        className="form-control"
+                        id="startDateInput"
+                        value={sketchBriefDate}
+                        onChange={(e) => setSketchBriefDate(e.target.value)}
+                        placeholder="Select a date"
+                      />
                         {/* <input
                                                 type="date"
                                                 className="form-control"
@@ -219,15 +264,15 @@ function EditSkitch() {
                                                 onChange={(e) => setSketchBriefDate(e.target.value)}
                                                 required
                                             /> */}
-                        <input
+                        {/* <input
                           type="text"
                           className="form-control"
                           value={sketchBriefDate}
-                          onFocus={(e) => (e.target.type = "date")} // Change to date picker when focused
+                          onFocus={(e) => (e.target.type = "date")} 
                           onChange={(e) => setSketchBriefDate(e.target.value)}
                           placeholder="Select a date"
                           required
-                        />
+                        /> */}
                       </div>
                     </div>
                     {/* Render Brief Date */}
@@ -236,6 +281,15 @@ function EditSkitch() {
                         <label htmlFor="customerCodeInput">
                           Sketch Completed Date
                         </label>
+                        <input
+                        type="date"
+                        className="form-control"
+                        id="endDateInput"
+                        value={sketchCompletedDate}
+                        onChange={(e) => setSketchCompletedDate(e.target.value)}
+                        min={sketchBriefDate}
+                        disabled={!sketchBriefDate}
+                      />
                         {/* <input
                                                 
                                                   type="datetime-local" 
@@ -255,7 +309,7 @@ function EditSkitch() {
                                                     required
                                                 /> */}
 
-                        <input
+                        {/* <input
                           type="date"
                           className="form-control"
                           value={sketchCompletedDate}
@@ -265,7 +319,7 @@ function EditSkitch() {
                           min={sketchBriefDate} // Restrict to dates after start date
                           disabled={!sketchBriefDate} // Disable until start date is selected
                           required
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>

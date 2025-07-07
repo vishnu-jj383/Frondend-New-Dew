@@ -178,7 +178,8 @@ const ApprovalLists = () => {
       });
       setCustomer_Rows(response.data.data || []);
     } catch (err) {
-      handleError(err);
+      // handleError(err);
+       console.error(`Failed to fetch designer data: ${err.message}`);
     }
   };
 
@@ -542,13 +543,13 @@ const ApprovalLists = () => {
                                           handleMoveToSkitch(row.id)
                                         }
                                          className="btn btn-sm"
-                                        style={{
+                                         style={{
                                           backgroundColor:
                                             row.orderStatus !== "order"
                                               ? "#0056b3"
                                               : "orange",
                                           animation:
-                                            row.orderStatus === "sorder" &&
+                                            row.orderStatus === "order" &&
                                             row.status === "Approved"
                                               ? "blink 1s infinite"
                                               : "none",
@@ -559,28 +560,32 @@ const ApprovalLists = () => {
                                           row.status !== "Approved"
                                         }
                                         // className={`btn btn-sm ${
-                                        //   row.orderStatus !== "order"
+                                        //   row.sketchStatus !== "sketch"
                                         //     ? "btn-secondary"
                                         //     : "btn-success"
                                         // }`}
                                       >
-                                        {row.orderStatus !== "order" &&
-                                        row.status === "Approved"
-                                          ? "Moved to Sketch"
-                                          : "Move to Sketch"}
+                                        {row.orderStatus !== "order"
+                                          ? "btn-success" && "Moved to Sketch"
+                                          : "btn-info" && "Move to Sketch"}
+                                       
                                       </button>
                                     </td>
                                   </tr>
                                 ))
-                              ) : (
+                              ) : isSearchActive ? (
                                 <tr>
-                                  <td colSpan="11" className="text-center">
-                                    {isSearchActive
-                                      ? "No data found"
-                                      : "No orders found"}
+                                  <td colSpan="9" className="text-center">
+                                    No data found
                                   </td>
                                 </tr>
-                              )}
+                              ) : (
+                                <tr>
+                                  <td colSpan="9" className="text-center">
+                                    No data found
+                                  </td>
+                                </tr>
+                             )}
                             </tbody>
                           </table>
                         </div>

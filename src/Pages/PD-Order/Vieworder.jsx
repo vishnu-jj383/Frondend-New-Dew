@@ -263,16 +263,17 @@ function Vieworder() {
 
     return (
         <main className="main-content">
-   
+    
         <Content>
             <div className="main-panel">
                 {/* <Header /> */}
                 <div className="vieworder-container">
-                <h4 className="vieworder-heading">{orderData["categoryGroup.category_group_name"]}</h4>
-                <button onClick={handlePrint} className="btn btn-primary print-btn">
-                    <FaPrint /> Print PDF
+                     <button onClick={handlePrint} className="btn btn-link p-0 me-2"  title="Download PDF">
+                   <FaPrint size={25} className="text-muted"  /> 
                   </button>
-                  <br></br>
+                
+                <h4 className="vieworder-heading">{orderData["categoryGroup.category_group_name"]}</h4>
+               
                     <div className="vieworder-cards">
                         {/* Image Card */}
                         <div className="vieworder-card image-card">

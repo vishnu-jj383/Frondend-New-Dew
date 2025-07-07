@@ -93,7 +93,8 @@ const PdLists = () => {
       });
       setCustomer_Rows(response.data.data || []);
     } catch (err) {
-      handleError(err);
+      // handleError(err);
+      console.error(`Failed to fetch designer data: ${err.message}`);
     }
   };
 
@@ -396,13 +397,19 @@ const PdLists = () => {
                                     </td>
                                   </tr>
                                 ))
+                              ) : isSearchActive ? (
+                                <tr>
+                                  <td colSpan="9" className="text-center">
+                                    No data found
+                                  </td>
+                                </tr>
                               ) : (
                                 <tr>
                                   <td colSpan="9" className="text-center">
-                                    {isSearchActive ? "No data found" : "No orders found"}
+                                    No data found
                                   </td>
                                 </tr>
-                              )}
+                             )}
                             </tbody>
                           </table>
                         </div>

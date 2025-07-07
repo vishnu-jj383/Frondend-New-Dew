@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Footer from "../../Components/Footer";
 import Header from "../../Components/Header";
 import Content from "../../Components/Content";
-
+import { useNavigate, useParams } from "react-router-dom";
 import {
   changeInputs,
   createPdOrder,
@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 
 const CreatePdOrder = () => {
   // const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
-
+const navigate = useNavigate();
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubtegories] = useState([]);
@@ -126,7 +126,8 @@ const CreatePdOrder = () => {
             icon: "success",
             confirmButtonText: "OK",
           }).then(() => {
-            window.location.reload();
+            // window.location.reload();
+              navigate("/pdLists");
           });
         } else if (data?.status === 422) {
           Swal.fire({
@@ -208,7 +209,7 @@ const CreatePdOrder = () => {
                         <input
                           type="number"
                           className="form-control"
-                          value={selectedCustomer?.phone_number || "NIL"}
+                          value={selectedCustomer?.phone_number|| "NIL"}
                           disabled
                           // style={{ height: "38px", fontSize: "14px" }}
                         />
@@ -276,6 +277,7 @@ const CreatePdOrder = () => {
                           value={pdItems.requiredDesignCount || ""}
                           onChange={handleChange}
                           min="1"
+                          
                           required
                           // style={{ height: "38px", fontSize: "14px" }}
                         />
@@ -519,7 +521,8 @@ const CreatePdOrder = () => {
                           name="expectedGrossWt"
                           value={pdItems.expectedGrossWt || ""}
                           onChange={handleChange}
-                          min="1"
+                          // min="1"
+                          pattern="^\d*\.?\d{0,2}$" // Allows numbers with up to 2 decimal places
                           required
                           // style={{ height: "38px", fontSize: "14px" }}
                         />
@@ -574,7 +577,8 @@ const CreatePdOrder = () => {
                           name="expectedNetWt"
                           value={pdItems.expectedNetWt || ""}
                           onChange={handleChange}
-                          min="1"
+                          // min="1"
+                          pattern="^\d*\.?\d{0,2}$" // Allows numbers with up to 2 decimal places
                           required
                           // style={{ height: "38px", fontSize: "14px" }}
                         />

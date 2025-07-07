@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Footer from "../../Components/Footer";
-import Content from "../../Components/Content";
+import Footer from "../../../Components/Footer";
+import Content from "../../../Components/Content";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { FaArrowLeft } from "react-icons/fa"; // Import the back arrow icon
@@ -163,7 +163,8 @@ function EditDesigner() {
         title: "Updated Successfully",
         text: "The task has been updated successfully.",
       }).then(() => {
-        navigate("/cad_approval_list");
+        // navigate("/cad_approval_list");
+         navigate(`/cad_designer/${cadId}`);
       });
     } catch (error) {
       if (error.response) {
@@ -299,7 +300,8 @@ function EditDesigner() {
       });
 
       // Navigate to the desired page after successful image upload
-      navigate("/cad_approval_list");
+      // navigate("/cad_approval_list");
+       navigate(`/cad_designer/${cadId}`);
       //  navigate(`/render_designer_edit/${designerId}`);
     } catch (error) {
       // Close the info alert if there is an error

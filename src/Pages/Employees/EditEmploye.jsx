@@ -215,7 +215,7 @@ function EditEmploye() {
       Swal.fire({
         icon: "success",
         title: "Employee Updated!",
-        text: `Employee has been updated successfully!`,
+        text: `Employee Has Been Updated Successfully!`,
         showConfirmButton: false,
         timer: 1500,
       });

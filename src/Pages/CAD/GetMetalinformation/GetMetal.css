@@ -52,6 +52,12 @@ style.css
     font-size: 1rem;
     margin-top: 10px;
   }
+
+  
+    .thead-dark th {
+  color: white !important; /* Set text color to white */
+  background-color: #343a40; /* Optional: Ensure a dark background for contrast */
+  }
   
   /* Responsive adjustments for table only */
   @media (max-width: 768px) {

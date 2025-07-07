@@ -7,8 +7,16 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 
 import { FaArrowRight, FaPlus, FaEye } from "react-icons/fa"; // Import icons from Font Awesome
-function EditCad() {
 
+const formatDateToLocal = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+function EditCad() {
   const { customerId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -47,13 +55,16 @@ function EditCad() {
         setOrderId(customerData.orderId || "");
         setReqCadCount(customerData.reqCadCount || "");
         // Format date for input (YYYY-MM-DD)
-        const formatDateForInput = (dateString) => {
-          if (!dateString) return "";
-          const date = new Date(dateString);
-          return isNaN(date) ? "" : date.toISOString().split("T")[0];
-        };
-        setCadCompletedDate(formatDateForInput(customerData.cadCompletedDate));
-        setPromiseDate(formatDateForInput(customerData.promiseDate));
+        // const formatDateForInput = (dateString) => {
+        //   if (!dateString) return "";
+        //   const date = new Date(dateString);
+        //   return isNaN(date) ? "" : date.toISOString().split("T")[0];
+        // };
+        // setCadCompletedDate(formatDateForInput(customerData.cadCompletedDate));
+        // setPromiseDate(formatDateForInput(customerData.promiseDate));
+        setPromiseDate(formatDateToLocal(customerData.promiseDate));
+        setCadCompletedDate(formatDateToLocal(customerData.cadCompletedDate));
+
         // const briefDate = customerData.promiseDate
         //   ? new Date(customerData.promiseDate).toISOString().split("T")[0]
         //   : "";
@@ -97,6 +108,47 @@ function EditCad() {
       return;
     }
 
+    // Date validation
+    const hasStartDate = promiseDate && promiseDate.trim() !== "";
+    const hasEndDate = cadCompletedDate && cadCompletedDate.trim() !== "";
+
+    if ((hasStartDate || hasEndDate) && !(hasStartDate && hasEndDate)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Dates Required",
+        text: "Both Start Date and Completed Date are required if one is provided.",
+      });
+      return;
+    }
+
+    if (
+      hasStartDate &&
+      hasEndDate &&
+      new Date(cadCompletedDate) < new Date(promiseDate)
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Dates",
+        text: "Completed Date cannot be before Start Date. Please correct the dates.",
+      });
+      return;
+    }
+
+    const payload = {
+      reqCadCount: parseInt(reqCadCount),
+      selectedCadCount: parseInt(selectedCadCount),
+      cadCompletedDate,
+      promiseDate,
+      specialInstruction,
+    };
+
+    if (hasStartDate) {
+      payload.promiseDate = promiseDate; // Send YYYY-MM-DD as is
+    }
+    if (hasEndDate) {
+      payload.cadCompletedDate = cadCompletedDate; // Send YYYY-MM-DD as is
+    }
+
     try {
       const savedToken = Cookies.get("authToken");
 
@@ -107,13 +159,14 @@ function EditCad() {
 
       const response = await axios.put(
         window.url + `cad/updateCad/${customerId}`,
-        {
-          reqCadCount: parseInt(reqCadCount),
-          selectedCadCount: parseInt(selectedCadCount),
-          cadCompletedDate,
-          promiseDate,
-          specialInstruction,
-        },
+        payload,
+        // {
+        //   reqCadCount: parseInt(reqCadCount),
+        //   selectedCadCount: parseInt(selectedCadCount),
+        //   cadCompletedDate,
+        //   promiseDate,
+        //   specialInstruction,
+        // },
         {
           headers: {
             Authorization: `Bearer ${savedToken}`,
@@ -129,7 +182,7 @@ function EditCad() {
       Swal.fire({
         icon: "success",
         title: "CAD Updated",
-        text: "The CAD details have been successfully updated.",
+        text: "The CAD Details Have Been Successfully Updated.",
       }).then(() => {
         navigate("/cadlist");
       });
@@ -144,7 +197,7 @@ function EditCad() {
         // alert(
         //   "Error updating customer: " + JSON.stringify(error.response.data)
         // );
-      } else { 
+      } else {
         Swal.fire({
           icon: "error",
           title: "Update Failed",
@@ -182,32 +235,31 @@ function EditCad() {
             <div className="page-header">
               {/* <ul className="breadcrumbs mb-3">
                 <li className="nav-item"> */}
-                <div className="row">
-                  <div className="col-3">
-                    <button
+              <div className="row">
+                <div className="col-3">
+                  <button
                     onClick={() => handleAddMetal(customerId)}
-                    className="btn btn-dark"
+                    className="btn btn-success"
                   >
                     Add Metal & Material
-                  </button> 
-                  </div>
-                   <div className="col-3">
-                    <button
+                  </button>
+                </div>
+                <div className="col-3">
+                  <button
                     onClick={() => handleViewMetal(customerId)}
                     className="btn btn-info"
                   >
-                    View Metal
+                    View Metal Details
                   </button>
-                   </div>
-                   <div className="col-3"></div>
-
                 </div>
-                <br/>
-                 
-                {/* </li>{" "} */}
-                {/* <li className="nav-item"> */}
-                  
-                {/* </li>
+                <div className="col-3"></div>
+              </div>
+              <br />
+
+              {/* </li>{" "} */}
+              {/* <li className="nav-item"> */}
+
+              {/* </li>
               </ul> */}
             </div>
 
@@ -289,13 +341,22 @@ function EditCad() {
                     <div className="col-md-6">
                       <div className="form-group">
                         <label htmlFor="dateInput">Start Date</label>
-                        <input
+                        {/* <input
                           type="date"
                           className="form-control"
                           id="dateInput"
                           value={promiseDate}
                           onChange={(e) => setPromiseDate(e.target.value)}
                           required
+                        /> */}
+
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="startDateInput"
+                          value={promiseDate}
+                          onChange={(e) => setPromiseDate(e.target.value)}
+                          placeholder="Select a date"
                         />
                       </div>
                     </div>
@@ -305,7 +366,7 @@ function EditCad() {
                         <label htmlFor="promisedDateInput">
                           Cad Completed Date
                         </label>
-                        <input
+                        {/* <input
                           type="date"
                           className="form-control"
                           id="promisedDateInput"
@@ -314,6 +375,15 @@ function EditCad() {
                           min={promiseDate}
                           disabled={!promiseDate}
                           required
+                        /> */}
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="endDateInput"
+                          value={cadCompletedDate}
+                          onChange={(e) => setCadCompletedDate(e.target.value)}
+                          min={promiseDate}
+                          disabled={!promiseDate}
                         />
                       </div>
                     </div>
@@ -347,7 +417,7 @@ function EditCad() {
             </div>
           </div>
         </div>
-        </Content>
+      </Content>
       <Footer />
     </main>
   );

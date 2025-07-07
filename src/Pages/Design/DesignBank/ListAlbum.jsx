@@ -89,7 +89,8 @@ function ListAlbum() {
         .filter(email => email !== null && email !== ""))];
       setFilteredEmails(validEmails);
     } catch (err) {
-      handleError(err, "customers");
+      // handleError(err, "customers");
+      console.error(`Failed to fetch designer data: ${err.message}`)
     } finally {
       setLoading(false);
     }

@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import { IoEye } from "react-icons/io5";
 import "../globalTable.css";
 import debounce from "lodash/debounce";
+import AddSketchDesigner from "./SketchDesigner/AddSketchDesigner";
 
 const ApprovalLists = () => {
   // const sideBarState = useSelector((state) => state?.sidebar?.sideBar);
@@ -231,108 +232,23 @@ const ApprovalLists = () => {
   };
 
   const handleAddDesignerClick = (rowId) => {
+    console.log("Clicked row ID:", rowId); // Debug log
     setSelectedRowId(rowId);
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setDesignerName("");
-    setStartDate("");
-    setEndDate("");
   };
 
   const handleViewsketch = (customerId) => {
     navigate(`/viewsketch/${customerId}`);
   };
+  useEffect(() => {
+    console.log(
+      "Current selectedRowId:",
+      selectedRowId,
+      "isModalOpen:",
+      isModalOpen
+    ); // Debug state changes
+  }, [selectedRowId, isModalOpen]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const savedToken = Cookies.get("authToken");
-
-    if (!savedToken) {
-      Swal.fire({
-        icon: "warning",
-        title: "Authentication Token Missing",
-        text: "Please log in to continue.",
-      });
-      return;
-    }
-
-    if (!designerName || !startDate || !endDate) {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Fields",
-        text: "Please fill all required fields.",
-      });
-      return;
-    }
-
-    // Add date comparison
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (end < start) {
-      Swal.fire({
-        icon: "warning",
-        title: "Invalid Date Range",
-        text: "End date must be equal to or greater than start date.",
-      });
-      return;
-    }
-
-    const dataToSend = {
-      id: selectedRowId,
-      empId: designerName,
-      startDate: start.toISOString().split("T")[0],
-      endDate: end.toISOString().split("T")[0],
-      type: "sketch",
-    };
-
-    try {
-      const response = await axios.put(
-        window.url + "sketch/addSketcher",
-        dataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Sketch Designer Created",
-        text: "Sketch Designer Created",
-      });
-
-      await fetchOrders();
-
-      setDesignerName("");
-      setStartDate("");
-      setEndDate("");
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error(
-        "Error creating Cad Designer:",
-        error.response ? error.response.data : error.message
-      );
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "Error: " +
-          (error.response
-            ? JSON.stringify(error.response.data)
-            : error.message),
-      });
-    }
-  };
-
-  const handleFormAndImageUpload = async (e) => {
-    await handleSubmit(e);
-  };
   const ViewDesignerButton = (orderId) => {
     navigate(`/sketch_designer/${orderId}`);
   };
@@ -580,7 +496,7 @@ const ApprovalLists = () => {
                             <thead>
                               <tr>
                                 <th></th>
-                                {/* <th>id</th> */}
+                                <th>id</th>
                                 <th>Sketch No</th>
                                 <th>Concept ID</th>
                                 <th>
@@ -621,7 +537,7 @@ const ApprovalLists = () => {
                                         onClick={() => handleViewsketch(row.id)}
                                       />
                                     </td>
-                                    {/* <td>{row.id}</td> */}
+                                    <td>{row.id}</td>
                                     <td>{row.sketchNo}</td>
                                     <td>{row.orderNo}</td>
                                     <td>
@@ -662,108 +578,15 @@ const ApprovalLists = () => {
                                         >
                                           Add Designer
                                         </button>
-                                        {isModalOpen && (
-                                          <div className="custom-modal-overlay">
-                                            <div className="custom-modal">
-                                              <div className="modal-header">
-                                                <h5>Add Sketch Designer</h5>
-                                              </div>
-                                              <form
-                                                onSubmit={
-                                                  handleFormAndImageUpload
-                                                }
-                                              >
-                                                <div className="modal-body">
-                                                  <div className="row">
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>
-                                                          Designer Name
-                                                        </label>
-                                                        <select
-                                                          className="form-select pd-select"
-                                                          id="settingType"
-                                                          value={designerName}
-                                                          onChange={(e) =>
-                                                            setDesignerName(
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        >
-                                                          <option value="">
-                                                            Select
-                                                          </option>
-                                                          {designer_name_array.map(
-                                                            (type) => (
-                                                              <option
-                                                                key={type.id}
-                                                                value={type.id}
-                                                              >
-                                                                {type.name}
-                                                              </option>
-                                                            )
-                                                          )}
-                                                        </select>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                  <div className="row">
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>
-                                                          Start Date
-                                                        </label>
-                                                        <input
-                                                          type="date"
-                                                          className="form-control"
-                                                          value={startDate}
-                                                          onChange={(e) =>
-                                                            setStartDate(
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                          required
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                      <div className="form-group">
-                                                        <label>End Date</label>
-                                                        <input
-                                                          type="date"
-                                                          className="form-control"
-                                                          value={endDate}
-                                                          onChange={(e) =>
-                                                            setEndDate(
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                          required
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div className="modal-footer">
-                                                  <button
-                                                    type="submit"
-                                                    className="btn btn-success"
-                                                  >
-                                                    Submit
-                                                  </button>{" "}
-                                                  &nbsp;
-                                                  <button
-                                                    type="button"
-                                                    className="btn btn-danger"
-                                                    onClick={handleCloseModal}
-                                                  >
-                                                    Close
-                                                  </button>
-                                                </div>
-                                              </form>
-                                            </div>
-                                          </div>
-                                        )}
+                                        {/* {isModalOpen && (
+                                          <AddSketchDesigner
+                                            selectedRowId={selectedRowId}
+                                            onClose={() =>
+                                              setIsModalOpen(false)
+                                            }
+                                            onSuccess={fetchOrders}
+                                          />
+                                        )} */}
                                       </div>
                                     </td>
                                     <td
@@ -876,6 +699,15 @@ const ApprovalLists = () => {
                             </tbody>
                           </table>
                         </div>
+                         {isModalOpen && (
+                                          <AddSketchDesigner
+                                            selectedRowId={selectedRowId}
+                                            onClose={() =>
+                                              setIsModalOpen(false)
+                                            }
+                                            onSuccess={fetchOrders}
+                                          />
+                                        )}
                         {/* Original Pagination Controls */}
                         {/* Pagination - Only shown when search is not active */}
                         {!isSearchActive && (

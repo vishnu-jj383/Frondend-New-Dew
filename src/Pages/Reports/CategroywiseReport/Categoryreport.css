@@ -1,0 +1,73 @@
+/* Scope all styles to the category-report-page class */
+.category-report-page .category-report-table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #aaa; /* Outer table border */
+}
+
+.category-report-page .category-report-table th,
+.category-report-page .category-report-table td {
+  border: 1px solid #aaa !important; /* Ensure all borders (vertical and horizontal) are visible */
+  border-right: 1px solid #aaa !important; /* Emphasize vertical lines (column lines) */
+  border-bottom: 1px solid #aaa !important; /* Emphasize horizontal lines (row lines) */
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Center-align text for non-range columns */
+.category-report-page .category-report-table .category-group-column,
+.category-report-page .category-report-table .category-column,
+.category-report-page .category-report-table .subcategory-column {
+  text-align: center !important;
+  background-color: #ffffff !important;
+}
+
+/* Right-align text for range and total columns */
+.category-report-page .category-report-table .range-column,
+.category-report-page .category-report-table .total-column {
+  text-align: right !important;
+}
+
+/* Style for the total column */
+.category-report-page .category-report-table .total-column {
+  background-color: #f5f5dc !important; /* Beige */
+}
+
+/* Range-specific styles for table body cells */
+.category-report-page .category-report-table tbody td.range-column.below-0-07 {
+  background-color: #ffebee !important; /* Light Red */
+}
+
+.category-report-page .category-report-table tbody td.range-column.range-0-50-1-00 {
+  background-color: #e8f5e9 !important; /* Light Green */
+}
+
+.category-report-page .category-report-table tbody td.range-column.range-1-00-1-50 {
+  background-color: #fffde7 !important; /* Light Yellow */
+}
+
+.category-report-page .category-report-table tbody td.range-column.range-1-50-2-00 {
+  background-color: #e3f2fd !important; /* Light Blue */
+}
+
+.category-report-page .category-report-table tbody td.range-column.range-2-00-2-50 {
+  background-color: #fce4ec !important; /* Light Pink */
+}
+
+.category-report-page .category-report-table tbody td.range-column.above-2-50 {
+  background-color: #f3e5f5 !important; /* Light Purple */
+}
+
+/* Ensure table headers and footers are not colored */
+.category-report-page .category-report-table thead th.range-column,
+.category-report-page .category-report-table tfoot th.range-column {
+  background-color: #ffffff !important;
+}
+
+/* Emphasize header and footer lines */
+.category-report-page .category-report-table thead th,
+.category-report-page .category-report-table tfoot th {
+  border-bottom: 2px solid #888 !important; /* Thicker horizontal line for headers and footers */
+  border-right: 1px solid #aaa !important; /* Ensure vertical lines in headers and footers */
+}

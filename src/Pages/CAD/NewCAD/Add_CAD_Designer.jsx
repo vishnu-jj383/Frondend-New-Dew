@@ -92,8 +92,18 @@ function Add_CAD_Designer() {
       navigate("/cadlist");
       // setShowModal(false);
     } catch (err) {
-      Swal.fire("Error", `Failed to add : ${err.message}`, "error");
-    }
+    // Extract error message from backend response
+    const errorMessage = err.response?.data?.data?.message || 
+                        err.response?.data?.message || 
+                        "An unexpected error occurred. Please try again.";
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: errorMessage,
+      confirmButtonText: "OK",
+    });
+  }
   };
   const handleCloseModal = () => {
     setShowModal(false);
